@@ -69,7 +69,7 @@ def get_header_defs(libtiff=None, lib_fn=None):
 
     libtiff_version_str = libtiff.TIFFGetVersion()
     i = libtiff_version_str.lower().split().index('version')
-    assert i!=-1,`libtiff_version_str`
+    assert i!=-1, repr(libtiff_version_str)
     libtiff_version = libtiff_version_str.split()[i+1]
 
     tiff_h_name = 'tiff_h_%s' % (libtiff_version.replace ('.','_'))
@@ -161,7 +161,7 @@ def create_tag_maps(header_dict):
         exec 'global %s; %s = %s' % (name, name, value)
         for n in define_to_name_map:
             if name.startswith(n.upper()):
-                define_to_name_map[n][value] = name        
+                define_to_name_map[n][value] = name
                 name_to_define_map[n][name] = value
 
     return name_to_define_map,define_to_name_map
@@ -175,7 +175,7 @@ d = header_def = get_header_defs(libtiff=libtiff, lib_fn=lib)
 all_tags = get_tag_names(header_def)
 name_to_define_map,define_to_name_map = create_tag_maps(all_tags)
 
-                
+
 # types defined by tiff.h
 class c_ttag_t(ctypes.c_uint): pass
 class c_tdir_t(ctypes.c_uint16): pass
@@ -317,7 +317,7 @@ tifftags = {
 #TIFFTAG_TRANSFERFUNCTION        1 or 3 uint16**          1<<BitsPerSample entry arrays
 #TIFFTAG_ICCPROFILE              2      uint32*,void**    count, profile data
 
-    # TIFFTAG: type, conversion  
+    # TIFFTAG: type, conversion
     TIFFTAG_COLORMAP: (ctypes.c_uint16, lambda d:(d[0].contents[:],d[1].contents[:],d[2].contents[:])),# 3 uint16* for Set, 3 uint16** for Get; size:(1<<BitsPerSample arrays)
     TIFFTAG_ARTIST: (ctypes.c_char_p, lambda d:d.value),
     TIFFTAG_COPYRIGHT: (ctypes.c_char_p, lambda d:d.value),
@@ -351,7 +351,7 @@ tifftags = {
     TIFFTAG_STRIPOFFSETS: (ctypes.POINTER(ctypes.c_uint32), lambda d:d.contents),
     TIFFTAG_TILEBYTECOUNTS: (ctypes.POINTER(ctypes.c_uint32), lambda d:d.contents),
     TIFFTAG_TILEOFFSETS: (ctypes.POINTER(ctypes.c_uint32), lambda d:d.contents),
-        
+
     TIFFTAG_BITSPERSAMPLE: (ctypes.c_uint16, lambda d:d.value),
     TIFFTAG_CLEANFAXDATA: (ctypes.c_uint16, lambda d:d.value),
     TIFFTAG_COMPRESSION: (ctypes.c_uint16, lambda d:d.value),
@@ -408,7 +408,7 @@ class TIFF(ctypes.c_void_p):
     To open a tiff file for reading, use
 
       tiff = TIFF.open (filename, more='r')
-      
+
     To read an image from a tiff file, use
 
       image = tiff.read_image()
@@ -455,7 +455,7 @@ class TIFF(ctypes.c_void_p):
         """
         tiff = libtiff.TIFFOpen(filename, mode)
         if tiff.value is None:
-            raise TypeError ('Failed to open file '+`filename`)
+            raise TypeError ('Failed to open file '+repr(filename))
         return tiff
 
     @staticmethod
@@ -474,7 +474,7 @@ class TIFF(ctypes.c_void_p):
         elif sample_format==SAMPLEFORMAT_COMPLEXIEEEFP:
             typ = getattr(np,'complex%s' % (bits))
         else:
-            raise NotImplementedError (`sample_format`)
+            raise NotImplementedError (repr(sample_format))
         return typ
 
     @debug
@@ -497,7 +497,7 @@ class TIFF(ctypes.c_void_p):
                 typ = np.uint32
                 itemsize = 4
             else:
-                raise NotImplementedError (`bits`)
+                raise NotImplementedError (repr(bits))
         else:
             itemsize = bits/8
 
@@ -528,26 +528,26 @@ class TIFF(ctypes.c_void_p):
         elif isinstance(value, str):
             return name_to_define_map['Compression']['COMPRESSION_'+value.upper()]
         else:
-            raise NotImplementedError(`value`)
+            raise NotImplementedError(repr(value))
 
     @staticmethod
     def _fix_sampleformat(value):
         if isinstance(value, int):
             return value
         elif value is None:
-            return SAMPLEFORMAT_UINT            
+            return SAMPLEFORMAT_UINT
         elif isinstance(value, str):
             return dict(int=SAMPLEFORMAT_INT, uint=SAMPLEFORMAT_UINT,
                         float=SAMPLEFORMAT_IEEEFP, complex=SAMPLEFORMAT_COMPLEXIEEEFP)[value.lower()]
         else:
-            raise NotImplementedError(`value`)
+            raise NotImplementedError(repr(value))
 
     def write_image(self, arr, compression=None, write_rgb=False):
         """ Write array as TIFF image.
 
         Parameters
         ----------
-        arr : :numpy:`ndarray`
+        arr : :numpy:repr(ndarray)
           Specify image data of rank 1 to 3.
         compression : {None, 'ccittrle', 'ccittfax3','ccitt_t4','ccittfax4','ccitt_t6','lzw','ojpeg','jpeg','next','ccittrlew','packbits','thunderscan','it8ctpad','it8lw','it8mp','it8bl','pixarfilm','pixarlog','deflate','adobe_deflate','dcs','jbig','sgilog','sgilog24','jp2000'}
         write_rgb: bool
@@ -566,7 +566,7 @@ class TIFF(ctypes.c_void_p):
         elif arr.dtype in np.sctypes['complex']:
             sample_format = SAMPLEFORMAT_COMPLEXIEEEFP
         else:
-            raise NotImplementedError(`arr.dtype`)
+            raise NotImplementedError(repr(arr.dtype))
         shape=arr.shape
         bits = arr.itemsize * 8
 
@@ -606,7 +606,7 @@ class TIFF(ctypes.c_void_p):
             if sample_format is not None:
                 self.SetField(TIFFTAG_SAMPLEFORMAT, sample_format)
 
-            WriteStrip(0, arr.ctypes.data, size)            
+            WriteStrip(0, arr.ctypes.data, size)
             self.WriteDirectory()
         elif len(shape)==3:
             depth, height, width = shape
@@ -642,7 +642,7 @@ class TIFF(ctypes.c_void_p):
                     WriteStrip(0, arr[n].ctypes.data, size)
                     self.WriteDirectory()
         else:
-            raise NotImplementedError (`shape`)
+            raise NotImplementedError (repr(shape))
 
     def write_tiles(self, arr):
         # Write rgb image if data is of shape HxWx3.
@@ -766,9 +766,9 @@ class TIFF(ctypes.c_void_p):
     @debug
     def ReadDirectory(self): return libtiff.TIFFReadDirectory(self)
     @debug
-    def WriteDirectory(self): 
+    def WriteDirectory(self):
         r = libtiff.TIFFWriteDirectory(self)
-        assert r==1, `r`
+        assert r==1, repr(r)
     @debug
     def SetDirectory(self, dirnum): return libtiff.TIFFSetDirectory(self, dirnum)
     @debug
@@ -787,28 +787,28 @@ class TIFF(ctypes.c_void_p):
     def NumberOfStrips(self): return libtiff.TIFFNumberOfStrips(self).value
 
     #@debug
-    def ReadRawStrip(self, strip, buf, size): 
+    def ReadRawStrip(self, strip, buf, size):
         return libtiff.TIFFReadRawStrip(self, strip, buf, size).value
-    def ReadEncodedStrip(self, strip, buf, size): 
+    def ReadEncodedStrip(self, strip, buf, size):
         return libtiff.TIFFReadEncodedStrip(self, strip, buf, size).value
 
-    def StripSize(self): 
+    def StripSize(self):
         return libtiff.TIFFStripSize(self).value
-    def RawStripSize(self, strip): 
+    def RawStripSize(self, strip):
         return libtiff.TIFFStripSize(self, strip).value
 
     @debug
-    def WriteRawStrip(self, strip, buf, size): 
+    def WriteRawStrip(self, strip, buf, size):
         r = libtiff.TIFFWriteRawStrip(self, strip, buf, size)
-        assert r.value==size,`r.value, size`
+        assert r.value==size,repr(r.value, size)
 
     @debug
-    def WriteEncodedStrip(self, strip, buf, size): 
+    def WriteEncodedStrip(self, strip, buf, size):
         r = libtiff.TIFFWriteEncodedStrip(self, strip, buf, size)
-        assert r.value==size,`r.value, size`
+        assert r.value==size,repr(r.value, size)
 
     closed = False
-    def close(self, libtiff=libtiff): 
+    def close(self, libtiff=libtiff):
         if not self.closed and self.value is not None:
             libtiff.TIFFClose(self)
             self.closed = True
@@ -969,7 +969,7 @@ class TIFF(ctypes.c_void_p):
                         'BitsPerSample', 'CleanFaxData', 'Compression',
                         'DataType', 'FillOrder', 'InkSet', 'Matteing',
                         'MaxSampleValue', 'MinSampleValue', 'Orientation',
-                        'PhotoMetric', 'PlanarConfig', 'Predictor', 
+                        'PhotoMetric', 'PlanarConfig', 'Predictor',
                         'ResolutionUnit', 'SampleFormat', 'YCBCRPositioning',
                         'JPEGQuality', 'JPEGColorMode', 'JPEGTablesMode',
                         'FaxMode', 'SMaxSampleValue', 'SMinSampleValue',
@@ -988,7 +988,7 @@ class TIFF(ctypes.c_void_p):
                 if tagname=='CZ_LSMInfo':
                     print(CZ_LSMInfo(self))
         return '\n'.join(l)
-        
+
     def copy(self, filename, **kws):
         """ Copy opened TIFF file to a new file.
 
@@ -1022,7 +1022,7 @@ class TIFF(ctypes.c_void_p):
             other.SetDirectory(self.CurrentDirectory())
             bits = self.GetField('BitsPerSample')
             sample_format = self.GetField('SampleFormat')
-            assert bits >=8, `bits, sample_format, dtype`
+            assert bits >=8, repr(bits, sample_format, dtype)
             itemsize = bits // 8
             dtype = self.get_numpy_type(bits, sample_format)
             for name, define in name_define_list:
@@ -1041,7 +1041,7 @@ class TIFF(ctypes.c_void_p):
             new_bits = other.GetField('BitsPerSample')
             new_sample_format = other.GetField('SampleFormat')
             new_dtype = other.get_numpy_type(new_bits, new_sample_format)
-            assert new_bits >=8, `new_bits, new_sample_format, new_dtype`
+            assert new_bits >=8, repr(new_bits, new_sample_format, new_dtype)
             new_itemsize = new_bits // 8
             strip_size = self.StripSize()
             new_strip_size = self.StripSize()
@@ -1316,7 +1316,7 @@ def _test_tile_read(filename=None):
     import sys
     if filename is None:
         if len(sys.argv) != 2:
-            print("Run `libtiff.py <filename>` for testing.")
+            print("Run repr(libtiff.py <filename>) for testing.")
             return
 
     a = TIFF.open(filename, "r")
@@ -1344,7 +1344,7 @@ def _test_read(filename=None):
     import time
     if filename is None:
         if len(sys.argv) != 2:
-            print('Run `libtiff.py <filename>` for testing.')
+            print('Run repr(libtiff.py <filename>) for testing.')
             return
         filename = sys.argv[1]
     print('Trying to open', filename, '...', end=' ')
@@ -1414,7 +1414,7 @@ def _test_copy():
                 if sampleformat in ['int','uint'] and bitspersample > 64:
                     continue
                 #print compression, sampleformat, bitspersample
-                tiff.copy ('/tmp/libtiff_test_copy2.tiff', 
+                tiff.copy ('/tmp/libtiff_test_copy2.tiff',
                            compression=compression,
                            imagedescription='hoo',
                            sampleformat=sampleformat,
@@ -1433,4 +1433,4 @@ if __name__=='__main__':
     #_test_write()
     #_test_read()
     #_test_copy()
-    
+
