@@ -4,11 +4,11 @@
 
 # SMHI,
 # Folkborgsvägen 1,
-# Norrköping, 
+# Norrköping,
 # Sweden
 
 # Author(s):
- 
+
 #   Martin Raspaud <martin.raspaud@smhi.se>
 
 # This file is part of mpop.
@@ -78,7 +78,7 @@ class FileList(list):
                 os.fsync(handle)
                 obj.save(tmpfilename)
                 os.fsync(handle)
-                os.chmod(tmpfilename, 0644)
+                os.chmod(tmpfilename, 0o644)
                 os.fsync(handle)
             except Exception:
                 logger.exception("Something went wrong in saving file... "
@@ -124,7 +124,7 @@ class FileList(list):
                     except (IOError, OSError):
                         logger.exception("No way...")
                 logger.debug("Done saving "+filename)
-                
+
             os.rename(tmpfilename, files_by_ext[extkey][0])
             os.fsync(handle)
             os.close(handle)
