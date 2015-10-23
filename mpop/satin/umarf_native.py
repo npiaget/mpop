@@ -156,7 +156,7 @@ def _load_from_file(filename, satscene, calibrate):
             dat = dec10to16(data["hrv"]["line_data"]).reshape((int(umarf["NumberLinesHRV"]))) * 1.0
         else:
             dat = dec10to16(data["visir"]["line_data"][:, CHANNELS[channel], :]) * 1.0
-            print dat.min(), dat.max()
+            print(dat.min(), dat.max())
         uil = UImageLoader(mda, dat, mask=False, calibrate=calibrate)
         md, res = uil()
 
@@ -208,7 +208,7 @@ def linear_load(filename):
         from pprint import pprint
         pprint(umarf)
         uhdrlen = fp_.tell()
-        print "UMARF header length", uhdrlen
+        print("UMARF header length", uhdrlen)
 
 
         gp_pk_header = np.dtype([
@@ -267,7 +267,7 @@ def linear_load(filename):
         visir_nb = selected.count("X", 0, 11)
         hrv_nb = selected.count("X", 11, 12)
 
-        print visir_nb, hrv_nb
+        print(visir_nb, hrv_nb)
 
         visir_type = np.dtype([("gp_pk", pk_head),
                                ("version", ">u1"),

@@ -1060,11 +1060,11 @@ if __name__ == '__main__':
     try:
         filename = sys.argv[1]
     except IndexError:
-        print >> sys.stderr, "usage: python ninjotiff.py <ninjotiff-filename>"
+        print("usage: python ninjotiff.py <ninjotiff-filename>", file=sys.stderr)
         sys.exit(2)
 
     for inf in info(filename):
-        print inf, '\n'
-    print colortable(filename)
+        print(inf, '\n')
+    print(colortable(filename))
     #for d__ in image_data(filename):
     #    print d__.min(), d__.mean(), d__.max()

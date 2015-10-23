@@ -733,15 +733,15 @@ if __name__ == "__main__":
     SCENE = AAPP1b(sys.argv[1])
     SCENE.read()
     for name, val in zip(SCENE._header.dtype.names, SCENE._header[0]):
-        print name, val
+        print(name, val)
     starttime = datetime.datetime(SCENE._header[0]["startdatayr"], 1, 1, 0, 0)
     starttime += datetime.timedelta(days=int(SCENE._header[0]["startdatady"]) - 1,
                                     seconds=SCENE._header[0]["startdatatime"] / 1000.0)
-    print "starttime:", starttime
+    print("starttime:", starttime)
     endtime = datetime.datetime(SCENE._header[0]["enddatayr"], 1, 1, 0, 0)
     endtime += datetime.timedelta(days=int(SCENE._header[0]["enddatady"]) - 1,
                                   seconds=SCENE._header[0]["enddatatime"] / 1000.0)
-    print "endtime:", endtime
+    print("endtime:", endtime)
     # print SCENE._data['hrpt'].shape
     #show(SCENE._data['hrpt'][:, :, 4].astype(np.float))
     # raw_input()
@@ -749,7 +749,7 @@ if __name__ == "__main__":
     SCENE.navigate()
     for i_ in AVHRR_CHANNEL_NAMES:
         data_ = SCENE.channels[i_]
-        print >> sys.stderr, "%-3s" % i_, \
+        print("%-3s" % i_, \
             "%6.2f%%" % (100. * (float(np.ma.count(data_)) / data_.size)), \
-            "%6.2f, %6.2f, %6.2f" % (data_.min(), data_.mean(), data_.max())
+            "%6.2f, %6.2f, %6.2f" % (data_.min(), data_.mean(), data_.max()), file=sys.stderr)
     show(SCENE.channels['2'], negate=False)

@@ -111,7 +111,7 @@ def parse_options():
                                     "area=", "composite="])
         del args
     except getopt.GetoptError, err:
-        print err
+        print(err)
         usage(sys.argv[0])
         sys.exit(2)
 

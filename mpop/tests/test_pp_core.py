@@ -99,7 +99,7 @@ class TestPPCore(unittest.TestCase):
         self.assertEquals(new_scene.area_id, area2)
 
         for chn in new_scene.channels:
-            print chn.area
+            print(chn.area)
             self.assertEquals(chn.area, area2)
         
         

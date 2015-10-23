@@ -36,7 +36,7 @@ def get_library_filename():
             # try default installation path:
             lib = r'C:\Program Files\GnuWin32\bin\libtiff3.dll'
             if os.path.isfile (lib):
-                print 'You should add %r to PATH environment variable and reboot.' % (os.path.dirname (lib))
+                print('You should add %r to PATH environment variable and reboot.' % (os.path.dirname (lib)))
             else:
                 lib = None
     else:
@@ -125,7 +125,7 @@ def get_header_defs(libtiff=None, lib_fn=None):
 
 
         fn = os.path.join (os.path.dirname (os.path.abspath (__file__)), tiff_h_name+'.py')
-        print 'Generating %r' % (fn)
+        print('Generating %r' % (fn))
         f = open(fn, 'w')
         f.write ('\n'.join(l) + '\n')
         f.close()
@@ -397,7 +397,7 @@ tifftags = {
 def debug(func):
     return func
     def new_func(*args, **kws):
-        print 'Calling',func.__name__
+        print('Calling',func.__name__)
         r = func (*args, **kws)
         return r
     return new_func
@@ -714,7 +714,7 @@ class TIFF(ctypes.c_void_p):
                 r = libtiff.TIFFReadTile(self, tmp_tile.ctypes.data, j, i, 0, 0)
                 if not r:
                     raise ValueError("Could not read tile x:%d,y:%d from file" % (j,i))
-                print >> sys.stderr, tmp_tile.shape, tmp_tile
+                print(tmp_tile.shape, tmp_tile, file=sys.stderr)
                 if ((i + num_trows) > num_irows) or ((j + num_tcols) > num_icols):
                     # We only need part of the tile because we are on the edge
                     full_image[i:i+num_trows, j:j+num_tcols] = tmp_tile[:num_irows-i,:num_icols-j]
@@ -838,7 +838,7 @@ class TIFF(ctypes.c_void_p):
         t = tifftags.get(tag)
         if t is None:
             if not ignore_undefined_tag:
-                print 'Warning: no tag %r defined' % (tag)
+                print('Warning: no tag %r defined' % (tag))
             return
         data_type, convert = t
 
@@ -879,7 +879,7 @@ class TIFF(ctypes.c_void_p):
 
         if not r: # tag not defined for current directory
             if not ignore_undefined_tag:
-                print 'Warning: tag %r not defined in currect directory' % (tag)
+                print('Warning: tag %r not defined in currect directory' % (tag))
             return None
 
         return convert(data)
@@ -897,7 +897,7 @@ class TIFF(ctypes.c_void_p):
 
         t = tifftags.get(tag)
         if t is None:
-            print 'Warning: no tag %r defined' % (tag)
+            print('Warning: no tag %r defined' % (tag))
             return
 
         data_type, convert = t
@@ -986,7 +986,7 @@ class TIFF(ctypes.c_void_p):
                     v = define_to_name_map.get(tagname, {}).get(v, v)
                 l.append('%s: %s' % (tagname, v))
                 if tagname=='CZ_LSMInfo':
-                    print CZ_LSMInfo(self)
+                    print(CZ_LSMInfo(self))
         return '\n'.join(l)
         
     def copy(self, filename, **kws):
@@ -1073,18 +1073,18 @@ class CZ_LSMInfo:
         fd = os.fdopen(f, 'r')
         pos = fd.tell()
         self.offset = self.tiff.GetField(TIFFTAG_CZ_LSMINFO)
-        print os.lseek(f, 0, 1)
+        print(os.lseek(f, 0, 1))
 
-        print pos
+        print(pos)
         #print libtiff.TIFFSeekProc(self.tiff, 0, 1)
         fd.seek(0)
-        print struct.unpack ('HH', fd.read (4))
-        print struct.unpack('I',fd.read (4))
-        print struct.unpack('H',fd.read (2))
+        print(struct.unpack ('HH', fd.read (4)))
+        print(struct.unpack('I',fd.read (4)))
+        print(struct.unpack('H',fd.read (2)))
         fd.seek(self.offset)
         d = [('magic_number', 'i4'),
              ('structure_size', 'i4')]
-        print pos, numpy.rec.fromfile(fd, d, 1)
+        print(pos, numpy.rec.fromfile(fd, d, 1))
         fd.seek(pos)
         #print hex (struct.unpack('I', fd.read (4))[0])
         #fd.close()
@@ -1259,7 +1259,7 @@ def _test_custom_tags():
         arr[:,:] = 255
         a.write_image(arr)
 
-        print "Tag Write: SUCCESS"
+        print("Tag Write: SUCCESS")
 
     def _tag_read():
         a = TIFF.open("/tmp/libtiff_test_custom_tags.tif", "r")
@@ -1280,7 +1280,7 @@ def _test_custom_tags():
         assert tmp=="FAKE","LibtiffTeststr was not read as 'FAKE'"
         tmp = a.GetField("PRIMARYCHROMATICITIES")
         assert tmp==[1.0,2.0,3.0,4.0,5.0,6.0],"PrimaryChromaticities was not read as [1.0,2.0,3.0,4.0,5.0,6.0]"
-        print "Tag Read: SUCCESS"
+        print("Tag Read: SUCCESS")
 
     # Define a C structure that says how each tag should be used
     test_tags = [
@@ -1309,14 +1309,14 @@ def _test_tile_write():
     data_array = np.tile(range(500), (2500,6)).astype(np.uint8)
     # Number of bytes written
     assert a.write_tiles(data_array)==(512*528) * 5 * 6,"could not write tile images"
-    print "Tile Write: Wrote array of shape %r" % (data_array.shape,)
-    print "Tile Write: SUCCESS"
+    print("Tile Write: Wrote array of shape %r" % (data_array.shape,))
+    print("Tile Write: SUCCESS")
 
 def _test_tile_read(filename=None):
     import sys
     if filename is None:
         if len(sys.argv) != 2:
-            print "Run `libtiff.py <filename>` for testing."
+            print("Run `libtiff.py <filename>` for testing.")
             return
 
     a = TIFF.open(filename, "r")
@@ -1330,36 +1330,36 @@ def _test_tile_read(filename=None):
     assert tmp is not None,"TileLength tag must be defined for reading tiles"
 
     data_array = a.read_tiles()
-    print "Tile Read: Read array of shape %r" % (data_array.shape,)
+    print("Tile Read: Read array of shape %r" % (data_array.shape,))
     assert data_array.shape==(ilength,iwidth),"tile data read was the wrong shape"
     if iwidth == 3000 and ilength == 2500:
         # The test file was created by _test_tile_write
         test_array = np.tile(range(500), (2500,6)).astype(np.uint8).flatten()
         assert np.nonzero(data_array.flatten() != test_array)[0].shape[0] == 0,"tile data read was not the same as the expected data"
-        print "Tile Read: Data is the same as expected from tile write test"
-    print "Tile Read: SUCCESS"
+        print("Tile Read: Data is the same as expected from tile write test")
+    print("Tile Read: SUCCESS")
 
 def _test_read(filename=None):
     import sys
     import time
     if filename is None:
         if len(sys.argv) != 2:
-            print 'Run `libtiff.py <filename>` for testing.'
+            print('Run `libtiff.py <filename>` for testing.')
             return
         filename = sys.argv[1]
-    print 'Trying to open', filename, '...',
+    print('Trying to open', filename, '...', end=' ')
     tiff = TIFF.open(filename)
-    print 'ok'
-    print 'Trying to show info ...\n','-'*10
-    print tiff.info()
-    print '-'*10,'ok'
-    print 'Trying show images ...'
+    print('ok')
+    print('Trying to show info ...\n','-'*10)
+    print(tiff.info())
+    print('-'*10,'ok')
+    print('Trying show images ...')
     t = time.time ()
     i = 0
     for image in tiff.iter_images(verbose=True):
         #print image.min(), image.max(), image.mean ()
         i += 1
-    print '\tok',(time.time ()-t)*1e3,'ms',i,'images'
+    print('\tok',(time.time ()-t)*1e3,'ms',i,'images')
 
 
 
@@ -1369,7 +1369,7 @@ def _test_write():
     for i in range(arr.shape[0]):
         for j in range (arr.shape[1]):
             arr[i,j] = i + 10*j
-    print arr
+    print(arr)
     tiff.write_image(arr)
     del tiff
 
@@ -1379,14 +1379,14 @@ def _test_write_float():
     for i in range(arr.shape[0]):
         for j in range (arr.shape[1]):
             arr[i,j] = i + 10*j
-    print arr
+    print(arr)
     tiff.write_image(arr)
     del tiff
 
     tiff = TIFF.open('/tmp/libtiff_test_write.tiff', mode='r')
-    print tiff.info()
+    print(tiff.info())
     arr2 = tiff.read_image()
-    print arr2
+    print(arr2)
 
 def _test_copy():
     tiff = TIFF.open('/tmp/libtiff_test_compression.tiff', mode='w')
@@ -1401,7 +1401,7 @@ def _test_copy():
     del tiff
 
     tiff = TIFF.open('/tmp/libtiff_test_compression.tiff', mode='r')
-    print tiff.info()
+    print(tiff.info())
     arr2 = tiff.read_image()
 
     assert (arr==arr2).all(),'arrays not equal'
@@ -1422,7 +1422,7 @@ def _test_copy():
                 tiff2 = TIFF.open('/tmp/libtiff_test_copy2.tiff', mode='r')
                 arr3 = tiff2.read_image()
                 assert (arr==arr3).all(),'arrays not equal %r' % ((compression, sampleformat, bitspersample),)
-    print 'test copy ok'
+    print('test copy ok')
 
 if __name__=='__main__':
     pass

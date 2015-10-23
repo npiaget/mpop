@@ -553,7 +553,7 @@ class ViirsCompositer(VisirCompositer):
         X = np.log10(X)
         chlor_a = 10 ** (a0 + a1 * X + a2 * (X ** 2) +
                          a3 * (X ** 3) + a4 * (X ** 4))
-        print 'chlor_a:', chlor_a.min(), chlor_a.mean(), chlor_a.max()
+        print('chlor_a:', chlor_a.min(), chlor_a.mean(), chlor_a.max())
 
         img = geo_image.GeoImage(chlor_a,
                                  self.area,

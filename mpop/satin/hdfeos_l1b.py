@@ -1034,5 +1034,5 @@ if __name__ == "__main__":
     #global_data.channels_to_load = set(['31'])
     #reader = ModisReader(global_data)
     #reader.load(global_data, filename=filenames)
-    print global_data
+    print(global_data)
     #global_data[10.8].show()

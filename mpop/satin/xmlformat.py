@@ -80,7 +80,7 @@ def process_array(elt, ascii=False):
     del ascii
     chld = elt.getchildren()
     if len(chld) > 1:
-        print "stop"
+        print("stop")
         raise ValueError()
     chld = chld[0]
     try:
