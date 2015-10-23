@@ -141,7 +141,7 @@ def load_generic(satscene, options, calibrate=True, area_extent=None,
                     raise ValueError("Slicing area must be in "
                                      "geos projection, and lon_0 should match "
                                      "the satellite's position.")
-            except ReaderError, err:
+            except ReaderError as err:
                 # if channel can't be found, go on with next channel
                 LOGGER.error(str(err))
                 continue

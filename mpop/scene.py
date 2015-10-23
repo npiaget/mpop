@@ -487,7 +487,7 @@ class SatelliteInstrumentScene(SatelliteScene):
                                          "four numbers.")
 
                 reader_instance.load(self, **kwargs)
-            except ImportError, err:
+            except ImportError as err:
                 LOG.exception("ImportError while loading " + reader_name + ": "
                               + str(err))
                 continue
@@ -514,7 +514,7 @@ class SatelliteInstrumentScene(SatelliteScene):
         writer = "satout." + to_format
         try:
             writer_module = __import__(writer, globals(), locals(), ["save"])
-        except ImportError, err:
+        except ImportError as err:
             raise ImportError("Cannot load " + writer + " writer: " + str(err))
 
         return writer_module.save(self, filename, **options)

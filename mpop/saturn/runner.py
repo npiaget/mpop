@@ -110,7 +110,7 @@ def parse_options():
                                    ["vv", "help", "date=", "pge", "rgb",
                                     "area=", "composite="])
         del args
-    except getopt.GetoptError, err:
+    except getopt.GetoptError as err:
         print(err)
         usage(sys.argv[0])
         sys.exit(2)
@@ -229,7 +229,7 @@ class SequentialRunner(object):
                                                               self.data.time_slot)
                     flist.save_object(img, hook)
                     del img
-                except (NotLoadedError, KeyError, ValueError), err:
+                except (NotLoadedError, KeyError, ValueError) as err:
                     LOG.warning("Error in "+product+": "+str(err))
                     LOG.info("Skipping "+product)
             del local_data
@@ -275,7 +275,7 @@ class SequentialRunner(object):
                     img.tags.update(extra_tags)
                 flist.save_object(img, hook)
                 del img
-            except (NotLoadedError, KeyError), err:
+            except (NotLoadedError, KeyError) as err:
                 LOG.warning("Error in "+product+": "+str(err))
                 LOG.info("Skipping "+product)
 

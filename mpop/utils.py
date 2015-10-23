@@ -65,7 +65,7 @@ class OrderedConfigParser(object):
             config = conf_file.read()
             config_keys = re.findall(r'\[.*\]', config)
             self.section_keys = [key[1:-1] for key in config_keys]
-        except IOError, e:
+        except IOError as e:
             # Pass if file not found
             if e.errno != 2:
                 raise

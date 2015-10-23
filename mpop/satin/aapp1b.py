@@ -55,7 +55,7 @@ LOGGER = logging.getLogger('aapp1b')
 
 def load(satscene, *args, **kwargs):
     """Read data from file and load it into *satscene*.
-    A possible *calibrate* keyword argument is passed to the AAPP reader. 
+    A possible *calibrate* keyword argument is passed to the AAPP reader.
     Should be 0 for off (counts), 1 for default (brightness temperatures and
     reflectances), and 2 for radiances only.
 
@@ -219,7 +219,7 @@ def load_avhrr(satscene, options):
 
         try:
             from pyresample import geometry
-        except ImportError, ex_:
+        except ImportError as ex_:
 
             LOGGER.debug("Could not load pyresample: %s", str(ex_))
 
