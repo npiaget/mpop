@@ -32,7 +32,12 @@ from mock import MagicMock, patch
 import sys
 sys.modules['pyresample.geometry'] = MagicMock()
 
-import ConfigParser
+try:
+    # 3.x name
+    import configparser
+except ImportError:
+    # 2.x name
+    import ConfigParser as configparser
 import datetime
 import random
 import unittest
@@ -85,16 +90,16 @@ def patch_configparser():
             """Dummy sections method
             """
             # return ["satellite", "udlptou-4"]
-            raise ConfigParser.NoSectionError("Dummy sections.")
+            raise configparser.NoSectionError("Dummy sections.")
 
-    ConfigParser.OldConfigParser = ConfigParser.ConfigParser
-    ConfigParser.ConfigParser = FakeConfigParser
+    configparser.OldConfigParser = configparser.ConfigParser
+    configparser.ConfigParser = FakeConfigParser
 
 
 def unpatch_configparser():
     """Unpatch fake ConfigParser.
     """
-    ConfigParser.ConfigParser = ConfigParser.OldConfigParser
+    configparser.ConfigParser = configparser.OldConfigParser
     delattr(ConfigParser, "OldConfigParser")
 
 

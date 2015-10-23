@@ -36,7 +36,12 @@ w=c&wchp=dGLzVlz-zSkWz&md5=bac5bc7a4f08007722ae793954f1dd63&ie=/sdarticle.pdf
 import glob
 from fnmatch import fnmatch
 import os.path
-from ConfigParser import ConfigParser
+try:
+    # 3.x name
+    from configparser import ConfigParser
+except ImportError:
+    # 2.x name
+    from ConfigParser import ConfigParser
 import multiprocessing
 from trollsift.parser import Parser
 

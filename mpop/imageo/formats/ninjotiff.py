@@ -334,7 +334,12 @@ class ProductConfigs(object):
         return sorted(self._products.keys())
 
     def read_config(self):
-        from ConfigParser import ConfigParser
+        try:
+    # 3.x name
+    from configparser import ConfigParser
+except ImportError:
+    # 2.x name
+    from ConfigParser import ConfigParser
 
         def _eval(val):
             try:

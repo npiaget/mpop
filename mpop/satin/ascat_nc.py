@@ -28,7 +28,12 @@
    rename the CONFIG file mpop/mpop/etc/metop.ascat.cfg.template to metop.cfg to read the ASCAT data
 """
 import numpy as np
-from ConfigParser import ConfigParser
+try:
+    # 3.x name
+    from configparser import ConfigParser
+except ImportError:
+    # 2.x name
+    from ConfigParser import ConfigParser
 from mpop import CONFIG_PATH
 import os
 

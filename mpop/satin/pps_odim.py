@@ -28,7 +28,12 @@
 """
 import glob
 import os.path
-from ConfigParser import ConfigParser
+try:
+    # 3.x name
+    from configparser import ConfigParser
+except ImportError:
+    # 2.x name
+    from ConfigParser import ConfigParser
 
 from datetime import datetime, timedelta
 import math

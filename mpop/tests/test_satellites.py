@@ -27,7 +27,12 @@
 
 """Unit tests for the module :mod:`pp.satellites`.
 """
-import ConfigParser
+try:
+    # 3.x name
+    import configparser
+except ImportError:
+    # 2.x name
+    import ConfigParser as configparser
 import random
 import unittest
 
@@ -88,13 +93,13 @@ def patch_configparser():
             if args[1] == "module":
                 return random_string(8)
             
-    ConfigParser.OldConfigParser = ConfigParser.ConfigParser
-    ConfigParser.ConfigParser = FakeConfigParser
+    configparser.OldConfigParser = configparser.ConfigParser
+    configparser.ConfigParser = FakeConfigParser
 
 def unpatch_configparser():
     """Unpatch fake ConfigParser.
     """
-    ConfigParser.ConfigParser = ConfigParser.OldConfigParser
+    configparser.ConfigParser = configparser.OldConfigParser
     delattr(ConfigParser, "OldConfigParser")
 
 def patch_scene():

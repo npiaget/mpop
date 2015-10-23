@@ -33,7 +33,12 @@
 
 import os
 import re
-import ConfigParser
+try:
+    # 3.x name
+    import configparser
+except ImportError:
+    # 2.x name
+    import ConfigParser as configparser
 import logging
 
 from mpop import CONFIG_PATH
@@ -46,7 +51,7 @@ class OrderedConfigParser(object):
     """
 
     def __init__(self, *args, **kwargs):
-        self.config_parser = ConfigParser.ConfigParser(*args, **kwargs)
+        self.config_parser = configparser.ConfigParser(*args, **kwargs)
 
     def __getattr__(self, name):
         return getattr(self.config_parser, name)
@@ -105,11 +110,11 @@ def debug_on():
 _is_logging_on = False
 
 # Read default log level from mpop's config file
-_config = ConfigParser.ConfigParser()
+_config = configparser.ConfigParser()
 _config.read(os.path.join(CONFIG_PATH, 'mpop.cfg'))
 try:
     default_loglevel = _config.get('general', 'loglevel')
-except (ConfigParser.NoOptionError, ConfigParser.NoSectionError):
+except (configparser.NoOptionError, configparser.NoSectionError):
     default_loglevel = 'WARNING'
 default_loglevel = getattr(logging, default_loglevel.upper())
 del _config

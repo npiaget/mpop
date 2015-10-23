@@ -29,7 +29,12 @@
 
 """Interface to SAR level-1 data. Using the MIPP reader.
 """
-import ConfigParser
+try:
+    # 3.x name
+    import configparser
+except ImportError:
+    # 2.x name
+    import ConfigParser as configparser
 import os
 
 from mipp import xsar
@@ -56,7 +61,7 @@ def load(satscene, calibrate=True):
     argument is passed to mipp (should be 0 for off, 1 for default, and 2 for
     radiances only).
     """
-    conf = ConfigParser.ConfigParser()
+    conf = configparser.ConfigParser()
     conf.read(os.path.join(CONFIG_PATH, satscene.fullname + ".cfg"))
     options = {}
     for option, value in conf.items(satscene.instrument_name + "-level2"):

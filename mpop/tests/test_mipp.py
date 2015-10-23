@@ -22,7 +22,12 @@
 
 """Test module for mipp plugin.
 """
-import ConfigParser
+try:
+    # 3.x name
+    import configparser
+except ImportError:
+    # 2.x name
+    import ConfigParser as configparser
 import datetime
 import random
 import unittest
@@ -107,13 +112,13 @@ def patch_configparser():
             except ValueError:
                 return []
         
-    ConfigParser.OldConfigParser = ConfigParser.ConfigParser
-    ConfigParser.ConfigParser = FakeConfigParser
+    configparser.OldConfigParser = configparser.ConfigParser
+    configparser.ConfigParser = FakeConfigParser
 
 def unpatch_configparser():
     """Unpatch fake ConfigParser.
     """
-    ConfigParser.ConfigParser = ConfigParser.OldConfigParser
+    configparser.ConfigParser = configparser.OldConfigParser
     delattr(ConfigParser, "OldConfigParser")
 
 

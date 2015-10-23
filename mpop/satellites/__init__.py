@@ -30,7 +30,12 @@ itself, it hold the mighty :meth:`mpop.satellites.get_satellite_class` method.
 """
 import os.path
 import weakref
-from ConfigParser import ConfigParser, NoSectionError, NoOptionError
+try:
+    # 3.x name
+    from configparser import ConfigParser, NoSectionError, NoOptionError
+except ImportError:
+    # 2.x name
+    from ConfigParser import ConfigParser, NoSectionError, NoOptionError
 import logging
 
 from mpop import CONFIG_PATH

@@ -28,7 +28,12 @@
 
 """Plugin for reading PPS's cloud products hdf files.
 """
-import ConfigParser
+try:
+    # 3.x name
+    import configparser
+except ImportError:
+    # 2.x name
+    import ConfigParser as configparser
 import datetime
 import os.path
 from glob import glob
@@ -160,7 +165,7 @@ def load(scene, **kwargs):
        "CloudType" not in scene.channels_to_load):
         return
     
-    conf = ConfigParser.ConfigParser()
+    conf = configparser.ConfigParser()
     conf.read(os.path.join(CONFIG_PATH, scene.fullname+".cfg"))
     directory = conf.get(scene.instrument_name+"-level3", "dir")
     filename = conf.get(scene.instrument_name+"-level3", "filename",

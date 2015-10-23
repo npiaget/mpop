@@ -30,7 +30,12 @@
 
 """Interface to Eumetcast level 1.5 HRIT/LRIT format. Uses the MIPP reader.
 """
-import ConfigParser
+try:
+    # 3.x name
+    import configparser
+except ImportError:
+    # 2.x name
+    import ConfigParser as configparser
 import os
 from pyproj import Proj
 
@@ -74,7 +79,7 @@ def load(satscene, calibrate=True, area_extent=None, area_def_names=None,
     radiances only).
     """
     del kwargs
-    conf = ConfigParser.ConfigParser()
+    conf = configparser.ConfigParser()
     conf.read(os.path.join(CONFIG_PATH, satscene.fullname + ".cfg"))
     options = {}
     for option, value in conf.items(satscene.instrument_name + "-level2"):

@@ -338,8 +338,13 @@ class GeoImage(Image):
 
         img = self.pil_image()
 
-        import ConfigParser
-        conf = ConfigParser.ConfigParser()
+        try:
+    # 3.x name
+    import configparser
+except ImportError:
+    # 2.x name
+    import ConfigParser as configparser
+        conf = configparser.ConfigParser()
         conf.read(os.path.join(CONFIG_PATH, "mpop.cfg"))
 
         coast_dir = conf.get('shapes', 'dir')
@@ -400,8 +405,13 @@ class GeoImage(Image):
         """
 
 
-        import ConfigParser
-        conf = ConfigParser.ConfigParser()
+        try:
+    # 3.x name
+    import configparser
+except ImportError:
+    # 2.x name
+    import ConfigParser as configparser
+        conf = configparser.ConfigParser()
         conf.read(os.path.join(CONFIG_PATH, "mpop.cfg"))
 
         coast_dir = conf.get('shapes', 'dir')

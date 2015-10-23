@@ -27,7 +27,12 @@ generic classes, to be inherited when needed.
 A scene is a set of :mod:`mpop.channel` objects for a given time, and sometimes
 also for a given area.
 """
-import ConfigParser
+try:
+    # 3.x name
+    import configparser
+except ImportError:
+    # 2.x name
+    import ConfigParser as configparser
 import copy
 import datetime
 import os.path
@@ -215,17 +220,17 @@ class SatelliteInstrumentScene(SatelliteScene):
                     name = eval(conf.get(section, "name"))
                     try:
                         w_range = eval(conf.get(section, "frequency"))
-                    except ConfigParser.NoOptionError:
+                    except configparser.NoOptionError:
                         w_range = (-np.inf, -np.inf, -np.inf)
                     try:
                         resolution = eval(conf.get(section, "resolution"))
-                    except ConfigParser.NoOptionError:
+                    except configparser.NoOptionError:
                         resolution = 0
                     self.channels.append(Channel(name=name,
                                                  wavelength_range=w_range,
                                                  resolution=resolution))
 
-        except (ConfigParser.NoSectionError, ConfigParser.NoOptionError):
+        except (configparser.NoSectionError, configparser.NoOptionError):
             for name, w_range, resolution in self.channel_list:
                 self.channels.append(Channel(name=name,
                                              wavelength_range=w_range,
@@ -434,15 +439,15 @@ class SatelliteInstrumentScene(SatelliteScene):
                 self.channels_to_load -= set([chn])
 
         # find the plugin to use from the config file
-        conf = ConfigParser.ConfigParser()
+        conf = configparser.ConfigParser()
         try:
             conf.read(os.path.join(CONFIG_PATH, self.fullname + ".cfg"))
             if len(conf.sections()) == 0:
-                raise ConfigParser.NoSectionError(("Config file did "
+                raise configparser.NoSectionError(("Config file did "
                                                    "not make sense"))
             levels = [section for section in conf.sections()
                       if section.startswith(self.instrument_name + "-level")]
-        except ConfigParser.NoSectionError:
+        except configparser.NoSectionError:
             LOG.warning("Can't load data, no config file for " + self.fullname)
             self.channels_to_load = set()
             return
@@ -453,7 +458,7 @@ class SatelliteInstrumentScene(SatelliteScene):
             levels = levels[1:]
 
         if len(levels) == 0:
-            raise ConfigParser.NoSectionError(
+            raise configparser.NoSectionError(
                 self.instrument_name + "-levelN (N>1) to tell me how to" +
                 " read data... Not reading anything.")
 

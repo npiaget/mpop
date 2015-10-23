@@ -34,7 +34,12 @@
 # - handle units for data
 # - pluginize
 import warnings
-from ConfigParser import NoSectionError
+try:
+    # 3.x name
+    from configparser import NoSectionError
+except ImportError:
+    # 2.x name
+    from ConfigParser import NoSectionError
 
 import numpy as np
 from netCDF4 import Dataset, num2date

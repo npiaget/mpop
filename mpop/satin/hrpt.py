@@ -33,7 +33,12 @@ import os.path
 import shutil
 import subprocess
 import tempfile
-from ConfigParser import ConfigParser
+try:
+    # 3.x name
+    from configparser import ConfigParser
+except ImportError:
+    # 2.x name
+    from ConfigParser import ConfigParser
 import datetime
 
 from mpop.utils import ensure_dir

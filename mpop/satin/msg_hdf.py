@@ -28,7 +28,12 @@
 
 """Plugin for reading PPS's cloud products hdf files.
 """
-import ConfigParser
+try:
+    # 3.x name
+    import configparser
+except ImportError:
+    # 2.x name
+    import ConfigParser as configparser
 import os.path
 from mpop import CONFIG_PATH
 import mpop.channel
@@ -1593,7 +1598,7 @@ def load(scene, **kwargs):
     """
 
     area_extent = kwargs.get("area_extent")
-    conf = ConfigParser.ConfigParser()
+    conf = configparser.ConfigParser()
     conf.read(os.path.join(CONFIG_PATH, scene.fullname + ".cfg"))
 
     if kwargs.get("filename") is not None:

@@ -25,8 +25,18 @@
 """Plugin for reading PPS's cloud products hdf files, in the fileformat used
 in PPS v2014.
 """
-import ConfigParser
-from ConfigParser import NoOptionError
+try:
+    # 3.x name
+    import configparser
+except ImportError:
+    # 2.x name
+    import ConfigParser as configparser
+try:
+    # 3.x name
+    from configparser import NoOptionError
+except ImportError:
+    # 2.x name
+    from ConfigParser import NoOptionError
 
 from datetime import datetime, timedelta
 import os.path
@@ -424,7 +434,7 @@ def load(scene, geofilename=None, **kwargs):
         area_name = "satproj_?????_?????"
 
 
-    conf = ConfigParser.ConfigParser()
+    conf = configparser.ConfigParser()
     conf.read(os.path.join(CONFIG_PATH, scene.fullname+".cfg"))
     directory = conf.get(scene.instrument_name+"-level3", "dir")
     try:

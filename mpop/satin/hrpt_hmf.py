@@ -31,7 +31,12 @@ TODO:
  - Faster navigation (pyorbital).
 
 """
-from ConfigParser import ConfigParser
+try:
+    # 3.x name
+    from configparser import ConfigParser
+except ImportError:
+    # 2.x name
+    from ConfigParser import ConfigParser
 import os
 import logging
 import glob
