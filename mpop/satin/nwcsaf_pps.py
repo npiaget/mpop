@@ -36,6 +36,9 @@ try:
 except ImportError:
     # 2.x name
     from ConfigParser import NoOptionError
+import sys
+if sys.version_info > (3,):
+    long = int
 
 from datetime import datetime, timedelta
 import os.path

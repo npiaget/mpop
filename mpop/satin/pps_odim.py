@@ -35,6 +35,9 @@ except ImportError:
     # 2.x name
     from ConfigParser import ConfigParser
 
+import sys
+if sys.version_info > (3,):
+    long = int
 from datetime import datetime, timedelta
 import math
 import numpy as np

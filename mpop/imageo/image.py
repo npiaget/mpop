@@ -38,7 +38,11 @@ warnings.warn(__name__ + " is deprecated, please use trollimage instead.",
 
 import os
 import re
-
+import sys
+if sys.version_info < (3,):
+    numbers_type = (int, long, float)
+else:
+    numbers_type = (int, float)
 from PIL import Image as Pil
 import numpy as np
 
@@ -936,9 +940,9 @@ class Image(object):
         are several channels in the image. The behaviour of :func:`gamma` is
         undefined outside the normal [0,1] range of the channels.
         """
-        if not isinstance(gamma, (int, long, float)):
+        if not isinstance(gamma, numbers_types):
             if(not isinstance(gamma, (tuple, list, set)) or
-               not _areinstances(gamma, (int, long, float))):
+               not _areinstances(gamma, numbers_types)):
                 raise TypeError("Gamma should be a real number, or an iterable "
                                 "of real numbers.")
 

@@ -3,7 +3,7 @@
 # Copyright (c) 2010, 2012, 2013.
 
 # Author(s):
- 
+
 #   Martin Raspaud <martin.raspaud@smhi.se>
 #   Adam Dybbroe <adam.dybbroe@smhi.se>
 #   Sara Hornquist <sara.hornquist@smhi.se>
@@ -37,6 +37,9 @@ try:
 except ImportError:
     # 2.x name
     from ConfigParser import NoOptionError
+import sys
+if sys.version_info > (3,):
+    long = int
 
 from datetime import datetime, timedelta
 import os.path
@@ -102,7 +105,7 @@ class NwcSafPpsChannel(mpop.channel.GenericChannel):
                 raise IOError("Failed to read the file %s" % filename)
 
             filename = tmpfilename
-            
+
         if not h5py.is_hdf5(filename):
             if is_temp:
                 os.remove(filename)
@@ -126,7 +129,7 @@ class NwcSafPpsChannel(mpop.channel.GenericChannel):
             for skey, value in dataset.attrs.iteritems():
                 if isinstance(value, h5py.h5r.Reference):
                     self._refs[(key, skey)] = h5f[value].name.split("/")[1]
-                    
+
             if type(dataset.id) is h5py.h5g.GroupID:
                 LOG.warning("Format reader does not support groups")
                 continue
@@ -136,7 +139,7 @@ class NwcSafPpsChannel(mpop.channel.GenericChannel):
                 is_palette = (dataset.attrs.get("CLASS", None) == "PALETTE")
                 if(len(dataset.shape) > 1 and
                    not is_palette and
-                   key not in ["lon", "lat", 
+                   key not in ["lon", "lat",
                                "row_indices", "column_indices"]):
                     self._projectables.append(key)
                     if self.shape is None:
@@ -150,7 +153,7 @@ class NwcSafPpsChannel(mpop.channel.GenericChannel):
                 self._keys.append(key)
 
         h5f.close()
-        
+
         if is_temp:
             os.remove(filename)
 
@@ -163,7 +166,7 @@ class NwcSafPpsChannel(mpop.channel.GenericChannel):
         # mask out bow-tie deletion pixels from the geolocation array
         # So far only relevant for VIIRS.
         # Preferably the lon-lat data in the PPS VIIRS geolocation
-        # file should already be masked. 
+        # file should already be masked.
         # The no-data values in the products are not only where geo-location is absent
         # Only the Cloud Type can be used as a proxy so far.
         # Adam Dybbroe, 2012-08-31
@@ -208,7 +211,7 @@ class NwcSafPpsChannel(mpop.channel.GenericChannel):
                 # Data on tiepoint grid:
                 interpolate = True
                 if not tiepoint_grid:
-                    errmsg = ("Interpolation needed but insufficient" + 
+                    errmsg = ("Interpolation needed but insufficient" +
                               "information on the tiepoint grid")
                     raise IOError(errmsg)
             else:
@@ -235,12 +238,12 @@ class NwcSafPpsChannel(mpop.channel.GenericChannel):
 
         if interpolate:
             from geotiepoints import SatelliteInterpolator
-        
+
             cols_full = np.arange(self.shape[1])
             rows_full = np.arange(self.shape[0])
 
             satint = SatelliteInterpolator((lons, lats),
-                                           (row_indices, 
+                                           (row_indices,
                                             column_indices),
                                            (rows_full, cols_full))
             #satint.fill_borders("y", "x")
@@ -296,7 +299,7 @@ class NwcSafPpsChannel(mpop.channel.GenericChannel):
                 res._keys.remove("lat")
             except AttributeError:
                 pass
-            
+
         except AttributeError:
             # It's a swath
             lons, scale_factor, add_offset, no_data = \
@@ -339,7 +342,7 @@ class NwcSafPpsChannel(mpop.channel.GenericChannel):
     def write(self, filename):
         """Write product in hdf format to *filename*
         """
-        
+
         LOG.debug("Writing to " + filename)
         h5f = h5py.File(filename, "w")
 
@@ -454,7 +457,7 @@ def load(scene, geofilename=None, **kwargs):
                 orbit = ""
             else:
                 orbit = scene.orbit
-            geoname_tmpl = conf.get(scene.instrument_name+"-level3", 
+            geoname_tmpl = conf.get(scene.instrument_name+"-level3",
                                     "geofilename", raw=True)
             filename_tmpl = (scene.time_slot.strftime(geoname_tmpl)
                              %{"orbit": orbit.zfill(5) or "*",
@@ -494,7 +497,7 @@ def load(scene, geofilename=None, **kwargs):
                            "area": area_name,
                            "satellite": scene.satname + scene.number,
                            "product": product})
-    
+
         file_list = glob.glob(filename_tmpl)
         if len(file_list) > 1:
             LOG.warning("More than 1 file matching for " + product + "! "
@@ -516,7 +519,7 @@ def load(scene, geofilename=None, **kwargs):
         # mask out bow-tie deletion pixels from the geolocation array
         # So far only relevant for VIIRS.
         # Preferably the lon-lat data in the PPS VIIRS geolocation
-        # file should already be masked. 
+        # file should already be masked.
         # The no-data values in the products are not only where geo-location is absent
         # Only the Cloud Type can be used as a proxy so far.
         # Adam Dybbroe, 2012-08-31
@@ -529,7 +532,7 @@ def load(scene, geofilename=None, **kwargs):
                         nodata_array, projectable.info["_FillValue"]).mask
                     break
         else:
-            LOG.warning("Channel has no '_projectables' member." + 
+            LOG.warning("Channel has no '_projectables' member." +
                         " No nodata-mask set...")
 
     if chn is None:
@@ -549,19 +552,19 @@ def load(scene, geofilename=None, **kwargs):
 
         lonlat_is_loaded = True
     else:
-        LOG.warning("No Geo file specified: " + 
+        LOG.warning("No Geo file specified: " +
                     "Geolocation will be loaded from product")
 
 
     if lonlat_is_loaded:
         if interpolate:
             from geotiepoints import SatelliteInterpolator
-        
+
             cols_full = np.arange(shape[1])
             rows_full = np.arange(shape[0])
 
             satint = SatelliteInterpolator((lons, lats),
-                                           (row_indices, 
+                                           (row_indices,
                                             column_indices),
                                            (rows_full, cols_full))
             #satint.fill_borders("y", "x")
@@ -571,14 +574,14 @@ def load(scene, geofilename=None, **kwargs):
             from pyresample import geometry
             lons = np.ma.masked_array(lons, nodata_mask)
             lats = np.ma.masked_array(lats, nodata_mask)
-            scene.area = geometry.SwathDefinition(lons=lons, 
+            scene.area = geometry.SwathDefinition(lons=lons,
                                                   lats=lats)
         except ImportError:
             scene.area = None
             scene.lat = lats
             scene.lon = lons
 
-            
+
     LOG.info("Loading PPS parameters done.")
 
 
@@ -608,7 +611,7 @@ def get_lonlat(filename):
         row_indices = h5f['/where/row_indices'].value
 
     h5f.close()
-    return {'lon': lons, 
-            'lat': lats, 
+    return {'lon': lons,
+            'lat': lats,
             'col_indices': col_indices, 'row_indices':row_indices}
     #return lons, lats
