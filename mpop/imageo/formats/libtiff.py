@@ -75,7 +75,7 @@ def get_header_defs(libtiff=None, lib_fn=None):
     tiff_h_name = 'tiff_h_%s' % (libtiff_version.replace ('.','_'))
 
     try:
-        exec 'import %s as tiff_h' % (tiff_h_name)
+        exec('import %s as tiff_h' % (tiff_h_name))
     except ImportError:
         tiff_h = None
 
@@ -158,7 +158,7 @@ def create_tag_maps(header_dict):
     for name, value in d.items():
         if name.startswith ('_'): continue
         # FIXME: Make the rest of this file not use globals, but access from the 2 maps returned
-        exec 'global %s; %s = %s' % (name, name, value)
+        exec('global %s; %s = %s' % (name, name, value))
         for n in define_to_name_map:
             if name.startswith(n.upper()):
                 define_to_name_map[n][value] = name
@@ -293,7 +293,7 @@ def add_tags(tag_list):
     tag_list_array = (TIFFFieldInfo * len(tag_list))(*tag_list)
     for field_info in tag_list_array:
         name = "TIFFTAG_" + str(field_info.field_name).upper()
-        exec 'global %s; %s = %s' % (name, name, field_info.field_tag)
+        exec('global %s; %s = %s' % (name, name, field_info.field_tag))
         if field_info.field_writecount > 1 and field_info.field_type != TIFFDataType.TIFF_ASCII:
             tifftags[field_info.field_tag] = (ttype2ctype[field_info.field_type]*field_info.field_writecount, lambda d:d.contents[:])
         else:
