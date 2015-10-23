@@ -54,7 +54,7 @@ log = logging.getLogger(__name__)
 # ------------------------------------------------------------------------------
 # Geotiff tags
 GTF_ModelPixelScale        = 33550
-GTF_ModelTiepoint          = 33922 
+GTF_ModelTiepoint          = 33922
 
 NTD_Magic                  = 40000
 NTD_SatelliteNameID        = 40001
@@ -335,11 +335,11 @@ class ProductConfigs(object):
 
     def read_config(self):
         try:
-    # 3.x name
-    from configparser import ConfigParser
-except ImportError:
-    # 2.x name
-    from ConfigParser import ConfigParser
+            # 3.x name
+            from configparser import ConfigParser
+        except ImportError:
+            # 2.x name
+            from ConfigParser import ConfigParser
 
         def _eval(val):
             try:

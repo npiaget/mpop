@@ -339,11 +339,11 @@ class GeoImage(Image):
         img = self.pil_image()
 
         try:
-    # 3.x name
-    import configparser
-except ImportError:
-    # 2.x name
-    import ConfigParser as configparser
+           # 3.x name
+           import configparser
+        except ImportError:
+           # 2.x name
+           import ConfigParser as configparser
         conf = configparser.ConfigParser()
         conf.read(os.path.join(CONFIG_PATH, "mpop.cfg"))
 
@@ -401,16 +401,16 @@ except ImportError:
 
     def add_overlay_config(self, config_file):
         """Add overlay to image parsing a configuration file.
-           
+
         """
 
 
         try:
-    # 3.x name
-    import configparser
-except ImportError:
-    # 2.x name
-    import ConfigParser as configparser
+            # 3.x name
+            import configparser
+        except ImportError:
+            # 2.x name
+            import ConfigParser as configparser
         conf = configparser.ConfigParser()
         conf.read(os.path.join(CONFIG_PATH, "mpop.cfg"))
 
@@ -426,7 +426,7 @@ except ImportError:
             logger.warning("AGGdraw lib not installed...width and opacity properties are not available for overlays.")
             from pycoast import ContourWriter
             cw_ = ContourWriter(coast_dir)
-            
+
 
         logger.debug("Getting area for overlay: " + str(self.area))
 
