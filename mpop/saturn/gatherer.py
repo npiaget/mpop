@@ -4,11 +4,11 @@
 
 # SMHI,
 # Folkborgsvägen 1,
-# Norrköping, 
+# Norrköping,
 # Sweden
 
 # Author(s):
- 
+
 #   Martin Raspaud <martin.raspaud@smhi.se>
 
 # This file is part of mpop.
@@ -63,7 +63,7 @@ if sys.version_info < (2, 5):
 else:
     strptime = datetime.datetime.strptime
 
-    
+
 def globify(filename):
     """Replace datetime string variable with ?'s.
     """
@@ -121,7 +121,7 @@ class Granule(SatelliteInstrumentScene):
                                               "filename", raw=True))
             self.directory = str(conf.get(instrument+"-granules",
                                           "dir", raw=True))
-            
+
             self.file_name = time_slot.strftime(self.file_template)
             self.directory = time_slot.strftime(self.directory)
             self.file_type = conf.get(instrument + "-granules", "type")
@@ -134,13 +134,13 @@ class Granule(SatelliteInstrumentScene):
             return
 
         # Setting up a granule from a filename
-        
+
         filelist = glob.glob(os.path.join(CONFIG_PATH, "*.cfg"))
 
         the_directory, the_name = os.path.split(filename)
 
         self.satname = None
-        
+
         for fil in filelist:
             conf = ConfigParser()
             conf.read(fil)
@@ -161,7 +161,7 @@ class Granule(SatelliteInstrumentScene):
                             pos1, pos2 = beginning(self.file_template)
                             time_slot = strptime(self.file_name[:pos2],
                                                  self.file_template[:pos1])
-        
+
                             SatelliteInstrumentScene.__init__(
                                 self,
                                 time_slot=time_slot,
@@ -188,14 +188,14 @@ class Granule(SatelliteInstrumentScene):
 
                 if self.satname is not None:
                     break
-                    
+
             except (NoSectionError, NoOptionError):
                 pass
 
-            
+
         if not self.satname:
             raise ValueError("Can't find any matching satellite for "+filename)
-        
+
 
     def __cmp__(self, obj):
         return (cmp(self.satname, obj.satname) or
@@ -210,7 +210,7 @@ class Granule(SatelliteInstrumentScene):
         """Get the longitude and latitude for the current scene at the given
         row and col.
         """
-        
+
         conf = ConfigParser()
         conf.read(os.path.join(CONFIG_PATH, self.fullname + ".cfg"))
 
@@ -244,16 +244,17 @@ class Granule(SatelliteInstrumentScene):
         lats = np.array([[top_left[1], top_right[1]],
                          [bottom_left[1], bottom_right[1]]])
         return SwathDefinition(lons, lats)
-        
+
 class SegmentedSwath(Satellite):
 
-    def __init__(self, area, (satname, number, variant)):
+    def __init__(self, area, sat_info):
+        satname, number, variant = sat_info
         Satellite.__init__(self, (satname, number, variant))
         self.area = get_area_def(area)
         self.granules = []
         self.planned_granules = []
         self.timeout = None
-    
+
 
     def add(self, granule):
         """Add a granule to the swath
@@ -277,7 +278,7 @@ class SegmentedSwath(Satellite):
         """Compute the planned granules for the current area.
         """
         nts = utc_time
-        
+
         new_granule = Granule(time_slot=nts, satellite=self,
                               instrument=instrument)
         if new_granule.gross_area.overlaps(self.area):
@@ -322,7 +323,7 @@ class SegmentedSwath(Satellite):
         conf.read(os.path.join(CONFIG_PATH, conffile))
 
         try:
-            
+
             # call concat
 
             reader_name = conf.get(self.granules[0].instrument_name +
@@ -348,7 +349,7 @@ class SegmentedSwath(Satellite):
                 raise ImportError("No "+reader+" reader found.")
 
             scene = reader_module.concatenate(self.granules, channels)
-            
+
         except NoSectionError:
             #concatenate loaded granules.
             scenes = [GenericFactory.create_scene(granule.satname,
@@ -364,8 +365,8 @@ class SegmentedSwath(Satellite):
             scene = mpop.scene.assemble_segments(scenes)
 
         return scene
-        
-            
+
+
 class Gatherer(Satellite):
     """The mighty gatherer class.
     """
@@ -412,12 +413,12 @@ class Gatherer(Satellite):
                                                              granule.number,
                                                              granule.variant))
         return interesting
-    
+
     def timeout(self):
         """Finishes swaths that are timed out.
         """
         now = datetime.datetime.utcnow()
-        
+
         for area_name, swath in self.swaths.items():
             if swath.timeout and swath.timeout + self.timeliness < now:
                 self.finished_swaths.append(swath)
@@ -429,10 +430,10 @@ class Gatherer(Satellite):
         """Clean up the finished swaths.
         """
         self.finished_swaths = []
-        
+
     def __str__(self):
         return self.fullname
-        
+
 # Typical example:
 
 # when new_file:
@@ -442,7 +443,7 @@ class Gatherer(Satellite):
 #         do_something_with(scene)
 #     gatherer.finished.clear()
 
-    
+
 # when its time (gatherer.next_timeout):
 #     gatherer.finish_timeouts()
 #     for swath in gatherer.finished:
@@ -481,7 +482,7 @@ def patch_configparser():
         """
         def __init__(self, *args, **kwargs):
             pass
-        
+
         def read(self, *args, **kwargs):
             """Dummy read method
             """
@@ -523,7 +524,7 @@ def patch_configparser():
             if(section == "satellite" and
                item == "variant"):
                 return "regional"
-            
+
 
     global OldConfigParser, ConfigParser
 
@@ -535,7 +536,7 @@ def unpatch_configparser():
     """
     global ConfigParser
     ConfigParser = OldConfigParser
-    
+
 
 
 
@@ -567,14 +568,14 @@ class TestGranules(unittest.TestCase):
         self.assertEquals(g_1.time_slot,
                           datetime.datetime(2010, 10, 10, 10, 10))
         self.assertEquals(g_1.instrument_name, "avhrr")
-        
+
         sat = Satellite("metop", "02", "regional")
         g_1 = Granule(instrument="avhrr", satellite=sat,
                      time_slot=datetime.datetime(2010, 10, 10, 10, 10))
-        
+
         self.assertEquals(os.path.join(g_1.directory, g_1.file_name),
                           "/path/to/my/data/myfile_20101010_1010.cooltype")
-        
+
 
     def test_cmp(self):
         """test the __cmp__ function.
@@ -596,13 +597,13 @@ def patch_granule():
         """
         def __init__(self, inside):
             self.inside = inside
-            
+
         def overlaps(self, other):
             """Fake overlaping function.
             """
             del other
             return self.inside
-    
+
     class FakeGranule:
         """Fake granule class.
         """
@@ -626,7 +627,7 @@ def patch_granule():
 
         def __repr__(self):
             return "G:" + str(self.time_slot)
-        
+
     global Granule, OldGranule
     OldGranule = Granule
     Granule = FakeGranule
@@ -639,12 +640,12 @@ def patch_granule_with_time():
         """
         def __init__(self, inside):
             self.inside = inside
-            
+
         def overlaps(self, other):
             """Fake overlaping function.
             """
             return self.inside
-    
+
     class FakeGranule:
         """Fake granule class.
         """
@@ -673,7 +674,7 @@ def patch_granule_with_time():
 
         def __repr__(self):
             return "G:" + str(self.time_slot)
-        
+
     global Granule, OldGranule
     OldGranule = Granule
     Granule = FakeGranule
@@ -682,7 +683,7 @@ def unpatch_granule():
 
     global Granule
     Granule = OldGranule
-    
+
 
 class TestSegmentedSwath(unittest.TestCase):
     """Testing SegmentedSwath.
@@ -704,14 +705,14 @@ class TestSegmentedSwath(unittest.TestCase):
         """
         swath = SegmentedSwath("bla", "bli", "blu", "blo")
         granule = Granule(5, "kurt")
-        
+
         swath.add(granule)
         self.assertEquals(granule.time_slot, swath.granules[0].time_slot)
         times = [granule.time_slot for granule in swath.planned_granules]
         self.assertEquals(times, [3, 4, 6, 7])
 
         self.assertEquals(swath.timeout, 7)
-        
+
         granule = Granule(4, "kurt")
         swath.add(granule)
 
@@ -723,10 +724,10 @@ class TestSegmentedSwath(unittest.TestCase):
         self.assertEquals(times, [4, 5])
 
         self.assertEquals(swath.timeout, 7)
-        
+
         granule = Granule(6, "kurt")
         swath.add(granule)
-        
+
         times = [granule.time_slot for granule in swath.planned_granules]
         self.assertEquals(times, [3, 7])
 
@@ -780,7 +781,7 @@ def patch_now():
         """Fake now function.
         """
         return datetime.datetime(2010, 10, 10, 0, 10)
-    
+
     datetime.datetime.oldnow = datetime.datetime.now
     datetime.datetime.now = fakenow
 
@@ -796,10 +797,10 @@ class TestGatherer(unittest.TestCase):
 
     def setUp(self):
         patch_granule_with_time()
-        
+
     def tearDown(self):
         unpatch_granule()
-        
+
     def test_init(self):
         """Testing initialisation.
         """
@@ -832,7 +833,7 @@ class TestGatherer(unittest.TestCase):
 
         # put the timeliness to zero and add a new granule:
         # This should add the granule as normal.
-        
+
         gatherer.timeliness = datetime.timedelta(seconds=0)
         gatherer.add(Granule(datetime.datetime(2010, 10, 10, 0, 7), "blaf"))
 
@@ -886,8 +887,8 @@ class TestGatherer(unittest.TestCase):
         self.assertFalse(gatherer.swaths["kurt"].planned_granules)
         self.assertFalse(gatherer.swaths["blu"].granules)
         self.assertFalse(gatherer.swaths["blu"].planned_granules)
-        
 
-        
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -67,7 +67,9 @@ class Satellite(object):
     """This is the satellite class. It contains information on the satellite.
     """
 
-    def __init__(self, (satname, number, variant)=(None, None, None)):
+    def __init__(self, sat_info=(None, None, None)):
+        "sat_info = (satname, number, variant)"
+        satname, number, variant = sat_info
         try:
             self.satname = satname or "" or self.satname
         except AttributeError:

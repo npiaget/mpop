@@ -72,15 +72,15 @@ def get_custom_composites(name):
         return []
 
 
-def get_sat_instr_compositer((satellite, number, variant), instrument):
-    """Get the compositer class for a given satellite, defined by the three
-    strings *satellite*, *number*, and *variant*, and *instrument*. The class
-    is then filled with custom composites if there are any (see
+def get_sat_instr_compositer(sat_info, instrument):
+    """Get the compositer class for a given satellite (sat_info, defined by the
+    three strings *satellite*, *number*, and *variant*) and *instrument*.
+    The class is then filled with custom composites if there are any (see
     :func:`get_custom_composites`). If no class is found, an attempt is made to
     build the class from a corresponding configuration file, see
     :func:`build_sat_instr_compositer`.
     """
-
+    satellite, number, variant = sat_info
     module_name = variant + satellite + number
     class_name = (variant.capitalize() + satellite.capitalize() +
                   number.capitalize() + instrument.capitalize())
@@ -113,15 +113,15 @@ def build_instrument_compositer(instrument_name):
     return instrument_class
 
 
-def build_sat_instr_compositer((satellite, number, variant), instrument):
-    """Build a compositer class for the given satellite (defined by the three
-    strings *satellite*, *number*, and *variant*) and *instrument* on the fly,
-    using data from a corresponding config file. They inherit from the
+def build_sat_instr_compositer(sat_info, instrument):
+    """Build a compositer class for the given satellite (sat_info, defined by the
+    three strings *satellite*, *number*, and *variant*) and *instrument* on the
+    fly, using data from a corresponding config file. They inherit from the
     corresponding instrument class, which is also created on the fly is no
     predefined module (containing a compositer) for this instrument is
     available (see :func:`build_instrument_compositer`).
     """
-
+    satellite, number, variant = sat_info
     fullname = variant + satellite + number
 
     conf = ConfigParser()
