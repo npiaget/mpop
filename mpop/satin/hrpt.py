@@ -4,11 +4,11 @@
 
 # SMHI,
 # Folkborgsvägen 1,
-# Norrköping, 
+# Norrköping,
 # Sweden
 
 # Author(s):
- 
+
 #   Martin Raspaud <martin.raspaud@smhi.se>
 
 # This file is part of mpop.
@@ -45,7 +45,7 @@ from mpop.utils import ensure_dir
 import mpop.satin.aapp1b
 from mpop import CONFIG_PATH
 
-from mpop.satellites import PolarFactory 
+from mpop.satellites import PolarFactory
 
 
 WORKING_DIR = "/tmp"
@@ -64,7 +64,7 @@ def get_satpos_file(satpos_time, satname):
                                satpos_time.strftime("%Y%m%d")+".txt")
 
     if os.path.exists(satpos_file):
-	return satpos_file
+	    return satpos_file
     elif satpos_time.hour < 2:
         satpos_time -= datetime.timedelta(days=1)
         satpos_file = os.path.join(SATPOS_DIR,
@@ -104,7 +104,7 @@ def load_avhrr(satscene, options):
         raise IOError("No hrpt file matching!: " +
                       satscene.time_slot.strftime(filename))
 
-    
+
     filename = file_list[0]
 
     (handle, tempname) = tempfile.mkstemp(prefix="hrpt_decommuted",
@@ -116,7 +116,7 @@ def load_avhrr(satscene, options):
         satname = "M02"
     else:
         satname = satscene.satname + satscene.number
-        
+
     decommutation(filename, tempname, satscene, options, satname)
     calibration_navigation(tempname, satscene, options)
 
@@ -127,7 +127,7 @@ def load_avhrr(satscene, options):
     pathname = os.path.join(new_dir, satscene.time_slot.strftime(new_name))
     LOG.debug("Saving to "+pathname)
     shutil.move(tempname, pathname)
-    
+
     mpop.satin.aapp1b.load(satscene)
     os.remove(pathname)
 
@@ -186,7 +186,7 @@ def calibration_navigation(filename, time_slot, shortname):
     if out:
         LOG.debug(out)
     if err:
-        LOG.error(err)    
+        LOG.error(err)
 
     anacl1 = ("cd /tmp;" +
               "$ANA_PATH/bin/ana_lmk_loc -D " + filename)
@@ -199,8 +199,8 @@ def calibration_navigation(filename, time_slot, shortname):
     if out:
         LOG.debug(out)
     if err:
-        LOG.error(err)    
-    
+        LOG.error(err)
+
     anacl2 = ("cd /tmp;" +
               "$ANA_PATH/bin/ana_estatt -s " + shortname +
               " -d " + time_slot.strftime("%Y%m%d") +
@@ -216,7 +216,7 @@ def calibration_navigation(filename, time_slot, shortname):
         LOG.debug(out)
     if err:
         LOG.error(err)
-        
+
     avhrcl2 = ("cd /tmp;" +
               "$AAPP_PREFIX/AAPP/bin/avhrcl -l -s " +
               shortname + " -d " +
@@ -233,7 +233,7 @@ def calibration_navigation(filename, time_slot, shortname):
         LOG.debug(out)
     if err:
         LOG.error(err)
-        
+
 def decommutation(filename_from, filename_to,
                   time_slot_start, time_slot_end,
                   shortname):
@@ -242,8 +242,8 @@ def decommutation(filename_from, filename_to,
     """
     import pysdh2orbnum
     LOG.info("Decommuting "+filename_from)
-    
-    
+
+
 
     (handle, tempname) = tempfile.mkstemp(prefix="decommutation",
                                           suffix=".par",
@@ -254,7 +254,7 @@ def decommutation(filename_from, filename_to,
     handle.write("10,11,15,15,16,0,0,13,0,0,0,14\n")
     handle.write(str(time_slot_start.year) + "\n")
     handle.write("0\n")
-    
+
     satpos_file = get_satpos_file(time_slot_start, shortname)
     formated_date = time_slot_start.strftime("%d/%m/%y %H:%M:%S.000")
     orbit_start = str(pysdh2orbnum.sdh2orbnum(shortname,
@@ -270,7 +270,7 @@ def decommutation(filename_from, filename_to,
 
     handle.write(orbit_start + "," + orbit_end + "\n")
     handle.close()
-    
+
     decom = "$AAPP_PREFIX/AAPP/bin/decommutation"
     cmd = " ".join(["cd " + WORKING_DIR + ";",
                     decom, "ATOVS", tempname, filename_from])
@@ -291,9 +291,9 @@ def decommutation(filename_from, filename_to,
 def get_orbit(time_slot, shortname):
     import pysdh2orbnum
     formated_date = time_slot.strftime("%d/%m/%y %H:%M:%S.000")
-    
+
     satpos_file = get_satpos_file(time_slot, shortname)
-    
+
     return str(pysdh2orbnum.sdh2orbnum(shortname,
                                        formated_date,
                                        satpos_file))
@@ -304,9 +304,9 @@ def concatenate(granules, channels=None):
     """
     filenames = [os.path.join(granule.directory, granule.file_name)
                  for granule in granules]
-    
+
     arg_string = " ".join(filenames)
-    
+
     if filenames[0].endswith(".bz2"):
         cat_cmd = "bzcat"
     else:
@@ -316,11 +316,11 @@ def concatenate(granules, channels=None):
     conffile = os.path.join(CONFIG_PATH, granules[0].fullname + ".cfg")
     conf = ConfigParser()
     conf.read(conffile)
-    
+
     directory = conf.get('avhrr-level1','dir')
     filename = conf.get('avhrr-level1','filename')
     filename = granules[0].time_slot.strftime(filename)
-    
+
     output_name = os.path.join(directory, filename)
     cmd = cat_cmd + " " + arg_string + " > " + output_name
     LOG.debug(cmd)
@@ -364,14 +364,14 @@ def get_lat_lon(satscene, resolution):
     """Read lat and lon.
     """
     del resolution
-    
+
     return LL_CASES[satscene.instrument_name](satscene, None)
 
 def get_lat_lon_avhrr(satscene, options):
     """Read lat and lon.
     """
     del options
-    
+
     return satscene.lat, satscene.lon
 
 def get_lonlat(satscene, row, col):
@@ -399,7 +399,7 @@ def get_lonlat_avhrr(satscene, row, col):
         satname = satscene.satname + satscene.number
 
     satpos_file = get_satpos_file(satscene.time_slot, satname)
-    
+
     pyaapp.read_satpos_file(jday_start, jday_end,
                             satscene.satname+" "+str(int(satscene.number)),
                             satpos_file)

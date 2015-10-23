@@ -4,11 +4,11 @@
 
 # SMHI,
 # Folkborgsvägen 1,
-# Norrköping, 
+# Norrköping,
 # Sweden
 
 # Author(s):
- 
+
 #   Martin Raspaud <martin.raspaud@smhi.se>
 
 # This file is part of mpop.
@@ -39,7 +39,7 @@ try:
 except ImportError:
     # 2.x name
     from ConfigParser import ConfigParser
-from mpop.satellites import PolarFactory 
+from mpop.satellites import PolarFactory
 import mpop.satin.aapp1b
 import datetime
 
@@ -60,7 +60,7 @@ def get_satpos_file(satpos_time, satname):
                                satname+"_"+
                                satpos_time.strftime("%Y%m%d")+".txt")
     if os.path.exists(satpos_file):
-	return satpos_file
+	    return satpos_file
     elif satpos_time.hour < 2:
         satpos_time -= datetime.timedelta(days=1)
         satpos_file = os.path.join(SATPOS_DIR,
@@ -100,7 +100,7 @@ def load_avhrr(satscene, options):
         raise IOError("No l1a file matching!: "+
                       satscene.time_slot.strftime(filename))
 
-    
+
     filename = file_list[0]
 
     conf = ConfigParser()
@@ -154,7 +154,7 @@ def calibration_navigation(filename, start_time, shortname):
     if out:
         LOG.debug(out)
     if err:
-        LOG.error(err)    
+        LOG.error(err)
 
     anacl1 = ("cd /tmp;" +
               "$ANA_PATH/bin/ana_lmk_loc -D " + filename)
@@ -167,8 +167,8 @@ def calibration_navigation(filename, start_time, shortname):
     if out:
         LOG.debug(out)
     if err:
-        LOG.error(err)    
-    
+        LOG.error(err)
+
     anacl2 = ("cd /tmp;" +
               "$ANA_PATH/bin/ana_estatt -s " + shortname +
               " -d " + start_time.strftime("%Y%m%d") +
@@ -184,7 +184,7 @@ def calibration_navigation(filename, start_time, shortname):
         LOG.debug(out)
     if err:
         LOG.error(err)
-        
+
     avhrcl2 = ("cd /tmp;" +
               "$AAPP_PREFIX/AAPP/bin/avhrcl -l -s " +
               shortname + " -d " +
@@ -203,7 +203,7 @@ def calibration_navigation(filename, start_time, shortname):
         LOG.error(err)
 
 
-        
+
 def decommutation(filename_from, filename_to):
     """Perform decommutation on *filename_from* and save the result in
     *filename_to*.
@@ -230,7 +230,7 @@ def get_orbit(time_slot, shortname):
     import pysdh2orbnum
     formated_date = time_slot.strftime("%d/%m/%y %H:%M:%S.000")
     satpos_file = get_satpos_file(time_slot, shortname)
-    
+
     return str(pysdh2orbnum.sdh2orbnum(shortname,
                                        formated_date,
                                        satpos_file))
@@ -263,11 +263,11 @@ def concatenate(granules, channels=None):
     conffile = os.path.join(CONFIG_PATH, granules[0].fullname + ".cfg")
     conf = ConfigParser()
     conf.read(os.path.join(CONFIG_PATH, conffile))
-    
+
     directory = conf.get('avhrr-level1','dir')
     filename = conf.get('avhrr-level1','filename')
     filename = granules[0].time_slot.strftime(filename)
-    
+
     output_name = os.path.join(directory, filename)
 
     arg_string = " ".join(new_names)
@@ -289,7 +289,7 @@ def concatenate(granules, channels=None):
     pathname = os.path.join(new_dir, granules[0].time_slot.strftime(new_name))
     shortname = conf.get('avhrr-level1','shortname')
     orbit = get_orbit(granules[0].time_slot, shortname)
-    
+
     convert_to_1b(output_name, pathname, granules[0].time_slot,
                   shortname)
     os.remove(output_name)
@@ -308,14 +308,14 @@ def get_lat_lon(satscene, resolution):
     """Read lat and lon.
     """
     del resolution
-    
+
     return LL_CASES[satscene.instrument_name](satscene, None)
 
 def get_lat_lon_avhrr(satscene, options):
     """Read lat and lon.
     """
     del options
-    
+
     return satscene.lat, satscene.lon
 
 def get_lonlat(satscene, row, col):
@@ -348,7 +348,7 @@ def get_lonlat_avhrr(satscene, row, col):
                             satpos_file)
     att = pyaapp.prepare_attitude(int(satscene.number), 0, 0, 0)
     lonlat = pyaapp.linepixel2lonlat(int(satscene.number), row, col, att,
-                                     jday_start, jday_end)[1:3] 
+                                     jday_start, jday_end)[1:3]
     return (lonlat[0] * 180.0 / math.pi, lonlat[1] * 180.0 / math.pi)
 
 LONLAT_CASES = {
