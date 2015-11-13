@@ -42,7 +42,12 @@ import os
 import logging
 import datetime
 import glob
-from ConfigParser import ConfigParser
+try:
+    # 3.x name
+    from configparser import ConfigParser
+except ImportError:
+    # 2.x name
+    from ConfigParser import ConfigParser
 from mpop import CONFIG_PATH
 
 LOGGER = logging.getLogger('aapp1b')
@@ -50,7 +55,7 @@ LOGGER = logging.getLogger('aapp1b')
 
 def load(satscene, *args, **kwargs):
     """Read data from file and load it into *satscene*.
-    A possible *calibrate* keyword argument is passed to the AAPP reader. 
+    A possible *calibrate* keyword argument is passed to the AAPP reader.
     Should be 0 for off (counts), 1 for default (brightness temperatures and
     reflectances), and 2 for radiances only.
 
@@ -167,21 +172,21 @@ def load_avhrr(satscene, options):
         import h5py
         LOGGER.info("Reading external calibration coefficients.")
         try:
-            fid = h5py.File(os.path.join(CONFIG_PATH, satscene.satname + \
+            fid = h5py.File(os.path.join(CONFIG_PATH, satscene.satname +
                                          '_calibration_data.h5'), 'r')
             calib_coeffs = {}
             for key in fid.keys():
                 date_diffs = []
                 for dat in fid[key]['datetime']:
-                    date_diffs.append(np.abs(satscene.time_slot - \
+                    date_diffs.append(np.abs(satscene.time_slot -
                                              datetime.datetime(dat[0],
                                                                dat[1],
                                                                dat[2])))
                 idx = date_diffs.index(min(date_diffs))
                 date_diff = satscene.time_slot - \
-                            datetime.datetime(fid[key]['datetime'][idx][0],
-                                              fid[key]['datetime'][idx][1],
-                                              fid[key]['datetime'][idx][2])
+                    datetime.datetime(fid[key]['datetime'][idx][0],
+                                      fid[key]['datetime'][idx][1],
+                                      fid[key]['datetime'][idx][2])
                 if date_diff.days < 0:
                     older_or_newer = "newer"
                 else:
@@ -214,7 +219,7 @@ def load_avhrr(satscene, options):
 
         try:
             from pyresample import geometry
-        except ImportError, ex_:
+        except ImportError as ex_:
 
             LOGGER.debug("Could not load pyresample: %s", str(ex_))
 
@@ -537,7 +542,7 @@ class AAPP1b(object):
             ch3b = _ir_calibrate(self._header, self._data, 0, calibrate)
             self.channels['3B'] = \
                 np.ma.masked_array(ch3b,
-                                   np.logical_or((is3b is False) * \
+                                   np.logical_or((is3b is False) *
                                                  ch3b,
                                                  ch3b < 0.1))
             if calibrate == 1:
@@ -580,7 +585,7 @@ def _vis_calibrate(data, chn, calib_type, pre_launch_coeffs=False,
     # Calibration count to albedo, the calibration is performed separately for
     # two value ranges.
 
-    channel = data["hrpt"][:, :, chn].astype(np.float)
+    channel = np.ma.masked_equal(data["hrpt"][:, :, chn], 0).astype(np.float)
     if calib_type == 0:
         return channel
 
@@ -639,8 +644,7 @@ def _ir_calibrate(header, data, irchn, calib_type):
     *calib_type* = 2: Radiances
     """
 
-    count = data['hrpt'][:, :, irchn + 2].astype(np.float)
-
+    count = np.ma.masked_equal(data['hrpt'][:, :, irchn + 2], 0).astype(np.float)
     if calib_type == 0:
         return count
 
@@ -711,7 +715,7 @@ def _ir_calibrate(header, data, irchn, calib_type):
 def show(data, negate=False):
     """Show the stetched data.
     """
-    import Image as pil
+    from PIL import Image as pil
     data = np.array((data - data.min()) * 255.0 /
                     (data.max() - data.min()), np.uint8)
     if negate:
@@ -733,15 +737,15 @@ if __name__ == "__main__":
     SCENE = AAPP1b(sys.argv[1])
     SCENE.read()
     for name, val in zip(SCENE._header.dtype.names, SCENE._header[0]):
-        print name, val
+        print(name, val)
     starttime = datetime.datetime(SCENE._header[0]["startdatayr"], 1, 1, 0, 0)
     starttime += datetime.timedelta(days=int(SCENE._header[0]["startdatady"]) - 1,
                                     seconds=SCENE._header[0]["startdatatime"] / 1000.0)
-    print "starttime:", starttime
+    print("starttime:", starttime)
     endtime = datetime.datetime(SCENE._header[0]["enddatayr"], 1, 1, 0, 0)
     endtime += datetime.timedelta(days=int(SCENE._header[0]["enddatady"]) - 1,
                                   seconds=SCENE._header[0]["enddatatime"] / 1000.0)
-    print "endtime:", endtime
+    print("endtime:", endtime)
     # print SCENE._data['hrpt'].shape
     #show(SCENE._data['hrpt'][:, :, 4].astype(np.float))
     # raw_input()
