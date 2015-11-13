@@ -940,9 +940,9 @@ class Image(object):
         are several channels in the image. The behaviour of :func:`gamma` is
         undefined outside the normal [0,1] range of the channels.
         """
-        if not isinstance(gamma, numbers_types):
+        if not isinstance(gamma, numbers_type):
             if(not isinstance(gamma, (tuple, list, set)) or
-               not _areinstances(gamma, numbers_types)):
+               not _areinstances(gamma, numbers_type)):
                 raise TypeError("Gamma should be a real number, or an iterable "
                                 "of real numbers.")
 
