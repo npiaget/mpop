@@ -42,12 +42,7 @@ import os
 import logging
 import datetime
 import glob
-try:
-    # 3.x name
-    from configparser import ConfigParser
-except ImportError:
-    # 2.x name
-    from ConfigParser import ConfigParser
+from ConfigParser import ConfigParser
 from mpop import CONFIG_PATH
 
 LOGGER = logging.getLogger('aapp1b')
@@ -55,7 +50,7 @@ LOGGER = logging.getLogger('aapp1b')
 
 def load(satscene, *args, **kwargs):
     """Read data from file and load it into *satscene*.
-    A possible *calibrate* keyword argument is passed to the AAPP reader.
+    A possible *calibrate* keyword argument is passed to the AAPP reader. 
     Should be 0 for off (counts), 1 for default (brightness temperatures and
     reflectances), and 2 for radiances only.
 
@@ -219,7 +214,7 @@ def load_avhrr(satscene, options):
 
         try:
             from pyresample import geometry
-        except ImportError as ex_:
+        except ImportError, ex_:
 
             LOGGER.debug("Could not load pyresample: %s", str(ex_))
 
@@ -738,15 +733,15 @@ if __name__ == "__main__":
     SCENE = AAPP1b(sys.argv[1])
     SCENE.read()
     for name, val in zip(SCENE._header.dtype.names, SCENE._header[0]):
-        print(name, val)
+        print name, val
     starttime = datetime.datetime(SCENE._header[0]["startdatayr"], 1, 1, 0, 0)
     starttime += datetime.timedelta(days=int(SCENE._header[0]["startdatady"]) - 1,
                                     seconds=SCENE._header[0]["startdatatime"] / 1000.0)
-    print("starttime:", starttime)
+    print "starttime:", starttime
     endtime = datetime.datetime(SCENE._header[0]["enddatayr"], 1, 1, 0, 0)
     endtime += datetime.timedelta(days=int(SCENE._header[0]["enddatady"]) - 1,
                                   seconds=SCENE._header[0]["enddatatime"] / 1000.0)
-    print("endtime:", endtime)
+    print "endtime:", endtime
     # print SCENE._data['hrpt'].shape
     #show(SCENE._data['hrpt'][:, :, 4].astype(np.float))
     # raw_input()
@@ -757,4 +752,4 @@ if __name__ == "__main__":
         print("%-3s" % i_, \
             "%6.2f%%" % (100. * (float(np.ma.count(data_)) / data_.size)), \
             "%6.2f, %6.2f, %6.2f" % (data_.min(), data_.mean(), data_.max()), file=sys.stderr)
-    show(SCENE.channels['2'], negate=False)
+    show(SCENE.channels['4'], negate=False)
