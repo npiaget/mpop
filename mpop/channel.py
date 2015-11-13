@@ -29,6 +29,8 @@
 """This module defines satellite instrument channels as a generic class, to be
 inherited when needed.
 """
+
+from __future__ import division
 import copy
 
 import numpy as np
@@ -451,7 +453,7 @@ class Channel(GenericChannel):
     def __rsub__(self, other):
         return Channel(name="new", data=self.data - other)
 
-    def __div__(self, other):
+    def __truediv__(self, other):
         return Channel(name="new", data=self.data / other)
 
     def __rdiv__(self, other):
