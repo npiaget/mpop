@@ -247,13 +247,12 @@ class SatelliteInstrumentScene(SatelliteScene):
                            chn.wavelength_range[0] <= key and
                            chn.wavelength_range[2] >= key)]
             channels = sorted(channels,
-                              lambda ch1, ch2:
-                                  ch1.__cmp__(ch2, key))
+                              key=lambda ch: ch.wavelength_range[1] - key)
 
         elif isinstance(key, str):
             channels = [chn for chn in self.channels
                         if chn.name == key]
-            channels = sorted(channels)
+            channels = sorted(channels, key=lambda ch: ch.name)
 
         elif isinstance(key, int):
             channels = [chn for chn in self.channels
