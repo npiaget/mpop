@@ -122,7 +122,7 @@ def build_sat_instr_compositer(sat_info, instrument):
     available (see :func:`build_instrument_compositer`).
     """
     satellite, number, variant = sat_info
-    fullname = variant + satellite + number
+    fullname = variant + satellite.capitalize() + '-{}'.format(int(number))
 
     conf = ConfigParser()
     config_file = os.path.join(CONFIG_PATH, fullname + ".cfg")

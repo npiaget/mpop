@@ -88,7 +88,8 @@ class Satellite(object):
         """Full name of the satellite, that is platform name and number
         (eg "metop02").
         """
-        return self.variant + self.satname + self.number
+        return self.variant + self.satname.capitalize() +\
+            '-{}'.format(int(self.number))
 
     @classmethod
     def remove_attribute(cls, name):
