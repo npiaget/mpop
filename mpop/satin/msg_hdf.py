@@ -263,13 +263,13 @@ class MsgCloudType(mpop.channel.GenericChannel):
         LOG.debug("Filename = <" + str(filename) + ">")
         h5f = h5py.File(filename, 'r')
         # pylint: disable-msg=W0212
-        self.package = h5f.attrs["PACKAGE"]
-        self.saf = h5f.attrs["SAF"]
-        self.product_name = h5f.attrs["PRODUCT_NAME"]
+        self.package = h5f.attrs["PACKAGE"].decode('utf8')
+        self.saf = h5f.attrs["SAF"].decode('utf8')
+        self.product_name = h5f.attrs["PRODUCT_NAME"].decode('utf8')
         self.num_of_columns = h5f.attrs["NC"]
         self.num_of_lines = h5f.attrs["NL"]
-        self.projection_name = h5f.attrs["PROJECTION_NAME"]
-        self.region_name = h5f.attrs["REGION_NAME"]
+        self.projection_name = h5f.attrs["PROJECTION_NAME"].decode('utf8')
+        self.region_name = h5f.attrs["REGION_NAME"].decode('utf8')
         self.cfac = h5f.attrs["CFAC"]
         self.lfac = h5f.attrs["LFAC"]
         self.coff = h5f.attrs["COFF"]
@@ -278,7 +278,7 @@ class MsgCloudType(mpop.channel.GenericChannel):
         self.gp_sc_id = h5f.attrs["GP_SC_ID"]
         self.image_acquisition_time = h5f.attrs["IMAGE_ACQUISITION_TIME"]
         self.spectral_channel_id = h5f.attrs["SPECTRAL_CHANNEL_ID"]
-        self.nominal_product_time = datetime.strptime(h5f.attrs["NOMINAL_PRODUCT_TIME"],
+        self.nominal_product_time = datetime.strptime(h5f.attrs["NOMINAL_PRODUCT_TIME"].decode('utf8'),
                                                       "%Y%m%d%H%M")
         self.sgs_product_quality = h5f.attrs["SGS_PRODUCT_QUALITY"]
         self.sgs_product_completeness = h5f.attrs["SGS_PRODUCT_COMPLETENESS"]
@@ -625,13 +625,13 @@ class MsgCTTH(mpop.channel.GenericChannel):
 
         # The header
         # pylint: disable-msg=W0212
-        self.package = h5f.attrs["PACKAGE"]
-        self.saf = h5f.attrs["SAF"]
-        self.product_name = h5f.attrs["PRODUCT_NAME"]
+        self.package = h5f.attrs["PACKAGE"].decode('utf8')
+        self.saf = h5f.attrs["SAF"].decode('utf8')
+        self.product_name = h5f.attrs["PRODUCT_NAME"].decode('utf8')
         self.num_of_columns = h5f.attrs["NC"]
         self.num_of_lines = h5f.attrs["NL"]
-        self.projection_name = h5f.attrs["PROJECTION_NAME"]
-        self.region_name = h5f.attrs["REGION_NAME"]
+        self.projection_name = h5f.attrs["PROJECTION_NAME"].decode('utf8')
+        self.region_name = h5f.attrs["REGION_NAME"].decode('utf8')
         self.cfac = h5f.attrs["CFAC"]
         self.lfac = h5f.attrs["LFAC"]
         self.coff = h5f.attrs["COFF"]
@@ -640,7 +640,7 @@ class MsgCTTH(mpop.channel.GenericChannel):
         self.gp_sc_id = h5f.attrs["GP_SC_ID"]
         self.image_acquisition_time = h5f.attrs["IMAGE_ACQUISITION_TIME"]
         self.spectral_channel_id = h5f.attrs["SPECTRAL_CHANNEL_ID"]
-        self.nominal_product_time = datetime.strptime(h5f.attrs["NOMINAL_PRODUCT_TIME"],
+        self.nominal_product_time = datetime.strptime(h5f.attrs["NOMINAL_PRODUCT_TIME"].decode('utf8'),
                                                       "%Y%m%d%H%M")
         self.sgs_product_quality = h5f.attrs["SGS_PRODUCT_QUALITY"]
         self.sgs_product_completeness = h5f.attrs["SGS_PRODUCT_COMPLETENESS"]
@@ -1074,13 +1074,13 @@ class MsgPC(mpop.channel.GenericChannel):
 
         h5f = h5py.File(filename, 'r')
         # pylint: disable-msg=W0212
-        self.package = h5f.attrs["PACKAGE"]
-        self.saf = h5f.attrs["SAF"]
-        self.product_name = h5f.attrs["PRODUCT_NAME"]
+        self.package = h5f.attrs["PACKAGE"].decode('utf8')
+        self.saf = h5f.attrs["SAF"].decode('utf8')
+        self.product_name = h5f.attrs["PRODUCT_NAME"].decode('utf8')
         self.num_of_columns = h5f.attrs["NC"]
         self.num_of_lines = h5f.attrs["NL"]
-        self.projection_name = h5f.attrs["PROJECTION_NAME"]
-        self.region_name = h5f.attrs["REGION_NAME"]
+        self.projection_name = h5f.attrs["PROJECTION_NAME"].decode('utf8')
+        self.region_name = h5f.attrs["REGION_NAME"].decode('utf8')
         self.cfac = h5f.attrs["CFAC"]
         self.lfac = h5f.attrs["LFAC"]
         self.coff = h5f.attrs["COFF"]
@@ -1089,7 +1089,7 @@ class MsgPC(mpop.channel.GenericChannel):
         self.gp_sc_id = h5f.attrs["GP_SC_ID"]
         self.image_acquisition_time = h5f.attrs["IMAGE_ACQUISITION_TIME"]
         self.spectral_channel_id = h5f.attrs["SPECTRAL_CHANNEL_ID"]
-        self.nominal_product_time = datetime.strptime(h5f.attrs["NOMINAL_PRODUCT_TIME"],
+        self.nominal_product_time = datetime.strptime(h5f.attrs["NOMINAL_PRODUCT_TIME"].decode('utf8'),
                                                       "%Y%m%d%H%M")
         self.sgs_product_quality = h5f.attrs["SGS_PRODUCT_QUALITY"]
         self.sgs_product_completeness = h5f.attrs["SGS_PRODUCT_COMPLETENESS"]
@@ -1108,7 +1108,7 @@ class MsgPC(mpop.channel.GenericChannel):
         self.probability_1.num_of_columns = h5d.attrs["N_COLS"]
         self.shape = (self.probability_1.num_of_lines,
                       self.probability_1.num_of_columns)
-        self.probability_1.product = h5d.attrs["PRODUCT"]
+        self.probability_1.product = h5d.attrs["PRODUCT"].decode('utf8')
         self.probability_1.id = h5d.attrs["ID"]
         self.probability_1.data = np.ma.masked_equal(
             self.probability_1.data, 0)
@@ -1570,7 +1570,7 @@ def get_area_from_file(filename):
 
     aex = get_area_extent(filename)
     h5f = h5py.File(filename, 'r')
-    pname = h5f.attrs["PROJECTION_NAME"]
+    pname = h5f.attrs["PROJECTION_NAME"].decode('utf8')
     proj = {}
     if pname.startswith("GEOS"):
         proj["proj"] = "geos"
@@ -1580,8 +1580,8 @@ def get_area_from_file(filename):
         proj["lon_0"] = str(float(pname.split("<")[1][:-1]))
     else:
         raise NotImplementedError("Only geos projection supported yet.")
-    area_def = AreaDefinition(h5f.attrs["REGION_NAME"],
-                              h5f.attrs["REGION_NAME"],
+    area_def = AreaDefinition(h5f.attrs["REGION_NAME"].decode('utf8'),
+                              h5f.attrs["REGION_NAME"].decode('utf8'),
                               pname,
                               proj,
                               int(h5f.attrs["NC"]),
