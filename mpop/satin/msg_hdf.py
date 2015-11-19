@@ -117,7 +117,7 @@ class UnknownChannelError(Exception):
 
 def pcs_def_from_region(region):
     items = region.proj_dict.items()
-    return ' '.join([t[0] + '=' + t[1] for t in items])
+    return ' '.join(['{}={}'.format(*t) for t in items])
 
 
 def _get_area_extent(cfac, lfac, coff, loff, numcols, numlines):
