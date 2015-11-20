@@ -16,23 +16,23 @@ class TestGenericChannel(unittest.TestCase):
     """
     chan = None
     chan2 = None
-    
+
     def test_init(self):
         """Creation of a generic channel.
         """
         self.chan = GenericChannel(name="newchan")
         self.assertEqual(self.chan.name, "newchan")
-        
+
         numb = int(np.random.uniform(100000))
         self.assertRaises(TypeError, GenericChannel, name=numb)
-        
+
         self.chan = GenericChannel()
         self.assertTrue(self.chan.name is None)
-        
+
     def test_cmp(self):
         """Comparison of generic channels.
         """
-        
+
         self.chan = GenericChannel(name = "newchan")
         self.chan2 = GenericChannel(name = "mychan")
 
@@ -40,7 +40,7 @@ class TestGenericChannel(unittest.TestCase):
 
         self.chan = GenericChannel(name = "newchan")
         self.chan2 = "mychan"
-        
+
         self.assertTrue(self.chan > self.chan2)
 
         self.chan = GenericChannel(name = "newchan")
@@ -100,7 +100,7 @@ class TestChannel(unittest.TestCase):
     """
     chan = None
     chan2 = None
-    
+
     def test_init(self):
         """Creation of a channel.
         """
@@ -134,7 +134,7 @@ class TestChannel(unittest.TestCase):
         self.assertRaises(TypeError, Channel,
                           name = "newchan",
                           resolution = "a")
-        
+
         # Wavelength
 
         numbs = [np.random.uniform(100),
@@ -158,7 +158,7 @@ class TestChannel(unittest.TestCase):
         numbs = [int(np.random.uniform(100)),
                  int(np.random.uniform(100)),
                  int(np.random.uniform(100))]
-        numbs.sort()        
+        numbs.sort()
 
         self.assertRaises(TypeError, Channel,
                           wavelength_range = numbs)
@@ -169,7 +169,7 @@ class TestChannel(unittest.TestCase):
         numb = np.random.uniform(100000)
         self.assertRaises(TypeError, Channel,
                           wavelength_range = numb)
-        
+
         numb = int(np.random.uniform(100000))
         self.assertRaises(TypeError, Channel,
                           wavelength_range = numb)
@@ -178,7 +178,7 @@ class TestChannel(unittest.TestCase):
         # Data
 
         data = np.random.rand(3, 3)
-        
+
         self.assertRaises(ValueError, Channel, data = data)
 
         self.chan = Channel(name = "newchan", data = data)
@@ -190,7 +190,7 @@ class TestChannel(unittest.TestCase):
 
         mask = np.array(np.random.rand(3, 3) * 2, dtype = int)
         data = np.ma.array(data, mask = mask)
-        
+
         self.chan = Channel(name = "newchan", data = data)
         self.assertEqual(self.chan.name, "newchan")
         self.assertEqual(self.chan.wavelength_range,
@@ -208,13 +208,13 @@ class TestChannel(unittest.TestCase):
                           Channel,
                           name = "newchan",
                           data = numb)
-        
+
         numb = int(np.random.uniform(100000))
         self.assertRaises(TypeError,
                           Channel,
                           name = "newchan",
                           data = numb)
-        
+
         numbs = [np.random.uniform(100),
                  np.random.uniform(100),
                  np.random.uniform(100)]
@@ -226,7 +226,7 @@ class TestChannel(unittest.TestCase):
     def test_cmp(self):
         """Comparison of channels.
         """
-        
+
         self.chan = Channel(name = "newchan")
         self.chan2 = Channel(name = "mychan")
 
@@ -234,7 +234,7 @@ class TestChannel(unittest.TestCase):
 
         self.chan = Channel(name = "newchan")
         self.chan2 = "mychan"
-        
+
         self.assertTrue(self.chan > self.chan2)
 
         self.chan = Channel(name = "newchan")
@@ -284,18 +284,18 @@ class TestChannel(unittest.TestCase):
 
         self.chan.data = np.random.rand(3, 3)
 
-        
+
         self.assertEqual(str(self.chan),
                          "'newchan: (1.000,2.000,3.000)μm, "
                          "shape (3, 3), "
                          "resolution 1000m'")
-        
+
 
     def test_is_loaded(self):
         """Check load status of a channel.
         """
         data = np.random.rand(3, 3)
-        
+
         self.chan = Channel(name = "newchan")
         self.assert_(not self.chan.is_loaded())
 
@@ -306,7 +306,7 @@ class TestChannel(unittest.TestCase):
         """Check the geo_image version of the channel.
         """
         data = np.random.rand(3, 3)
-        
+
         self.chan = Channel(name="newchan", data=data)
         img = self.chan.as_image(False)
         self.assert_(np.allclose(img.channels[0], data))
@@ -323,7 +323,7 @@ class TestChannel(unittest.TestCase):
         self.chan = Channel(name = "newchan")
         self.assertRaises(ValueError, self.chan.check_range)
 
-        numb = np.random.uniform(10) 
+        numb = np.random.uniform(10)
         self.assertRaises(ValueError, self.chan.check_range, numb)
 
         # ndarray
@@ -349,7 +349,7 @@ class TestChannel(unittest.TestCase):
         self.assert_(np.all(data == self.chan.check_range(min_range)))
         self.assertEquals(data.count(),
                           self.chan.check_range(min_range).count())
-        
+
         zeros = np.zeros_like(data)
         min_range = (data.max() - data.min()) + E
         self.assert_(np.all(zeros == self.chan.check_range(min_range)))
@@ -377,7 +377,7 @@ class TestChannel(unittest.TestCase):
         import datetime as dt
 
         chan = Channel(name='test')
-        
+
         original_value = 10.
 
         chan.data = original_value * np.ones((2,11))
@@ -405,7 +405,7 @@ class TestChannel(unittest.TestCase):
 
         # Channel name
         self.assertEqual(new_ch.name, chan.name+'_SZC')
-        
+
         # Test channel name in the info dict
         self.assertEqual(new_ch.name, chan.info['sun_zen_corrected'])
 
@@ -431,7 +431,7 @@ class TestChannel(unittest.TestCase):
                           -17.80502488, -63.9031154],
                          [-107.14829679, -147.66665952, -0.75970554,
                            77.701768, -130.48677807]])
-        lats = np.array([[-51.53681682, -83.21762788, 5.91008672, 
+        lats = np.array([[-51.53681682, -83.21762788, 5.91008672,
                            22.51730385, 66.83356427],
                          [82.78543163,  23.1529456 ,  -7.16337152,
                           -68.23118425, 28.72194953],
@@ -457,20 +457,20 @@ class TestChannel(unittest.TestCase):
 
         new_ch = chan.sunzen_corr(time_slot, lonlats=(lons, lats), limit=80.)
         self.assertAlmostEqual(np.max(results-new_ch.data), 0.000, places=3)
-        
+
 #    def test_project(self):
 #        """Project a channel.
 #        """
         # from pp.coverage import SatProjCov
 #         from pp.scene import SatelliteInstrumentScene
-        
+
 #         cov = SatProjCov(SatelliteInstrumentScene(area = "euro"),
 #                          "scan", 1000)
 #         data = np.tile(np.array([[1, 2],[3, 4]]), (256, 256))
 #         self.chan = Channel(name = "newchan", data = data)
 #         self.chan.project(cov)
 
-def random_string(length, choices=string.letters):
+def random_string(length, choices=string.ascii_letters):
     """Generates a random string with elements from *set* of the specified
     *length*.
     """
@@ -486,5 +486,5 @@ def suite():
     mysuite = unittest.TestSuite()
     mysuite.addTest(loader.loadTestsFromTestCase(TestGenericChannel))
     mysuite.addTest(loader.loadTestsFromTestCase(TestChannel))
-    
+
     return mysuite
