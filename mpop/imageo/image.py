@@ -950,7 +950,7 @@ class Image(object):
            len(gamma) != len(self.channels)):
             raise ValueError("Number of channels and gamma components differ.")
 
-        if gamma < 0:
+        if isinstance(gamma, numbers_type) and gamma < 0:
             raise ValueError("Gamma correction must be a positive number.")
 
         if gamma == 1.0:

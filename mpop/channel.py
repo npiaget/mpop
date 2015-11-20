@@ -203,7 +203,9 @@ class Channel(GenericChannel):
             sun_zenith = sza(self.info['time'], lonlats[0], lonlats[1])
 
         try:
-            refl39 = Calculator(self.info['satname'] + self.info['satnumber'],
+            name = self.info['satname'].capitalize() \
+                + '-{}'.format(int(self.info['satnumber']))
+            refl39 = Calculator(name,
                                 self.info['instrument_name'], self.name)
         except NameError:
             LOG.warning("pyspectral missing!")
