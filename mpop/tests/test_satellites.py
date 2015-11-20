@@ -4,11 +4,11 @@
 
 # SMHI,
 # Folkborgsvägen 1,
-# Norrköping, 
+# Norrköping,
 # Sweden
 
 # Author(s):
- 
+
 #   Martin Raspaud <martin.raspaud@smhi.se>
 
 # This file is part of mpop.
@@ -39,6 +39,11 @@ import unittest
 import mpop.instruments.visir
 import mpop.satellites
 
+try:
+    from imp import reload
+except ImportError:
+    pass
+
 INSTRUMENTS = ()
 
 def random_string(length,
@@ -59,7 +64,7 @@ def patch_configparser():
         """
         def __init__(self, *args, **kwargs):
             pass
-        
+
         def sections(self, *args, **kwargs):
             """Dummy sections method.
             """
@@ -70,7 +75,7 @@ def patch_configparser():
                 for j in range(int(random.random() * 10 + 1)):
                     sections += [i + str(j)]
             return sections
-        
+
         def read(self, *args, **kwargs):
             """Dummy read method
             """
@@ -92,7 +97,7 @@ def patch_configparser():
                 return str(random.random())
             if args[1] == "module":
                 return random_string(8)
-            
+
     configparser.OldConfigParser = configparser.ConfigParser
     configparser.ConfigParser = FakeConfigParser
 
@@ -118,7 +123,7 @@ def patch_scene():
             del args
             return self.data
 
-    
+
     class FakeSatscene(object):
         """Fake SatelliteInstrumentScene.
         """
@@ -128,7 +133,7 @@ def patch_scene():
             self.area = None
             self.time_slot = None
             self.error = []
-        
+
         def check_channels(self, *args):
             """Dummy check_channels function.
             """
@@ -141,7 +146,7 @@ def patch_scene():
     mpop.instruments.visir.OldVisirCompositer = mpop.instruments.visir.VisirCompositer
     mpop.instruments.visir.VisirCompositer = FakeSatscene
     reload(mpop.satellites)
-    
+
 
 def unpatch_scene():
     """Unpatch the :mod:`mpop.scene` module.
@@ -163,7 +168,7 @@ class TestSatellites(unittest.TestCase):
         """
         patch_configparser()
         patch_scene()
-        
+
     def test_buildinstrument(self):
         """Test the :func:`mpop.satellites.build_instrument` function.
         """
@@ -174,7 +179,7 @@ class TestSatellites(unittest.TestCase):
         # Test that the patches are applied
         self.assertEquals(inst.__version__, "fake")
 
-        
+
         #self.assertEquals(inst.channel_list, ch_list)
         self.assertEquals(inst.instrument_name, name)
         self.assertEquals(inst.mro()[1], mpop.instruments.visir.VisirCompositer)
@@ -198,7 +203,7 @@ class TestSatellites(unittest.TestCase):
         self.assertEquals(myclass.mro()[1].__name__,
                           inst.capitalize() +
                           "Compositer")
-            
+
     def test_get_satellite_class(self):
         """Test the :func:`mpop.satellites.get_satellite_class` function.
         """
@@ -243,5 +248,5 @@ def suite():
     loader = unittest.TestLoader()
     mysuite = unittest.TestSuite()
     mysuite.addTest(loader.loadTestsFromTestCase(TestSatellites))
-    
+
     return mysuite

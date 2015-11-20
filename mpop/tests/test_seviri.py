@@ -3,7 +3,7 @@
 # Copyright (c) 2010, 2011, 2014.
 
 # Author(s):
- 
+
 #   Martin Raspaud <martin.raspaud@smhi.se>
 
 # This file is part of mpop.
@@ -30,6 +30,11 @@ import numpy as np
 import mpop.instruments.seviri
 from mpop.imageo import geo_image
 
+try:
+    from imp import reload
+except ImportError:
+    pass
+
 
 def patch_scene_mask():
     """Patch the :mod:`mpop.scene` module to avoid using it in these tests.
@@ -47,7 +52,7 @@ def patch_scene_mask():
             del args
             return self.data
 
-    
+
     class FakeSatscene(object):
         """Fake SatelliteInstrumentScene.
         """
@@ -68,7 +73,7 @@ def patch_scene_mask():
             if key not in self.channels:
                 self.channels[key] = FakeChannel(key)
             return self.channels[key]
-        
+
     mpop.instruments.visir.OldVisirCompositer = mpop.instruments.visir.VisirCompositer
     mpop.instruments.visir.VisirCompositer = FakeSatscene
     reload(mpop)
@@ -90,7 +95,7 @@ def patch_scene():
             del args
             return self.data
 
-    
+
     class FakeSatscene(object):
         """Fake SatelliteInstrumentScene.
         """
@@ -100,7 +105,7 @@ def patch_scene():
             self.area = None
             self.time_slot = None
             self._data_holder = self
-            
+
         def check_channels(self, *args):
             """Dummy check_channels function.
             """
@@ -108,7 +113,7 @@ def patch_scene():
 
         def __contains__(self, point):
             return True
-            
+
 
         def __getitem__(self, key):
             if key == "_IR39Corr":
@@ -145,7 +150,7 @@ def patch_geo_image():
             self.kwargs = kwargs
             self.lum = None
             self.channels = [self]
-            
+
         def enhance(self, **kwargs):
             """Dummy enhance function.
             """
@@ -155,7 +160,7 @@ def patch_geo_image():
             """Dummy remplace_luminance.
             """
             self.lum = lum
-        
+
 
     geo_image.OldGeoImage = geo_image.GeoImage
     geo_image.GeoImage = FakeGeoImage
@@ -229,8 +234,8 @@ class TestComposites(unittest.TestCase):
 #         self.assertEquals(img.kwargs["stretch"], "crude")
 #         self.assertTrue("crange" not in img.kwargs)
 #         self.assertTrue("gamma" not in img.kwargs)
-        
-        
+
+
 
     def tearDown(self):
         unpatch_scene()
@@ -256,11 +261,11 @@ class TestCo2Corr(unittest.TestCase):
         bt039 = self.scene[3.9].data
         bt108 = self.scene[10.8].data
         bt134 = self.scene[13.4].data
-        
+
         dt_co2 = (bt108-bt134)/4.0
         rcorr = bt108 ** 4 - (bt108-dt_co2) ** 4
-        
-        
+
+
         t4_co2corr = bt039 ** 4 + rcorr
         if t4_co2corr < 0.0:
             t4_co2corr = 0
@@ -285,5 +290,5 @@ def suite():
     mysuite = unittest.TestSuite()
     mysuite.addTest(loader.loadTestsFromTestCase(TestComposites))
     mysuite.addTest(loader.loadTestsFromTestCase(TestCo2Corr))
-    
+
     return mysuite

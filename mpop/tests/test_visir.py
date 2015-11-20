@@ -3,7 +3,7 @@
 # Copyright (c) 2010, 2011, 2014.
 
 # Author(s):
- 
+
 #   Martin Raspaud <martin.raspaud@smhi.se>
 
 # This file is part of mpop.
@@ -31,6 +31,10 @@ import mpop.instruments.visir
 import mpop.scene
 from mpop.imageo import geo_image
 
+try:
+    from imp import reload
+except ImportError:
+    pass
 
 def patch_scene():
     """Patch the :mod:`mpop.scene` module to avoid using it in these tests.
@@ -41,13 +45,13 @@ def patch_scene():
         def __init__(self, val):
             self.data = val
             self.area = None
-            
+
         def check_range(self):
             """Dummy check_range function.
             """
             return self.data
 
-    
+
     class FakeSatscene(object):
         """Fake SatelliteInstrumentScene.
         """
@@ -56,7 +60,7 @@ def patch_scene():
             self.channels = None
             self.area = None
             self.time_slot = None
-        
+
         def check_channels(self, *args):
             """Dummy check_channels function.
             """
@@ -119,7 +123,7 @@ class TestComposites(unittest.TestCase):
         patch_geo_image()
         patch_scene()
         self.scene = mpop.instruments.visir.VisirCompositer(mpop.scene.SatelliteInstrumentScene())
-        
+
 
     def test_channel_image(self):
         """Test channel_image.
@@ -131,7 +135,7 @@ class TestComposites(unittest.TestCase):
         self.assertEquals(img.kwargs["mode"], "L")
         self.assertEquals(img.kwargs["fill_value"], 0)
         self.assertTrue("crange" not in img.kwargs)
-        
+
     def test_overview(self):
         """Test overview.
         """
@@ -161,7 +165,7 @@ class TestComposites(unittest.TestCase):
         #self.assertEquals(self.scene.airmass.prerequisites, set([6.7, 7.3,
         #                                                         9.7, 10.8]))
 
-    
+
     # def test_vis06(self):
     #     """Test vis06.
     #     """
@@ -231,7 +235,7 @@ class TestComposites(unittest.TestCase):
         self.assertTrue("stretch" not in img.kwargs)
         #self.assertEquals(self.scene.natural.prerequisites,
         #                  set([0.635, 0.85, 1.63]))
-        
+
 
     # def test_green_snow(self):
     #     """Test green_snow.
@@ -258,7 +262,7 @@ class TestComposites(unittest.TestCase):
     #     self.assertTrue("gamma" not in img.kwargs)
     #     #self.assertEquals(self.scene.red_snow.prerequisites,
     #     #                  set([1.63, 0.635, 10.8]))
-    
+
 
     def test_convection(self):
         """Test convection.
@@ -348,8 +352,8 @@ class TestComposites(unittest.TestCase):
         self.assertEquals(img.kwargs["stretch"], (0.005, 0.005))
         #self.assertEquals(self.scene.cloudtop.prerequisites,
         #                  set([3.75, 10.8, 12.0]))
-       
- 
+
+
 
     def tearDown(self):
         unpatch_scene()
@@ -362,5 +366,5 @@ def suite():
     loader = unittest.TestLoader()
     mysuite = unittest.TestSuite()
     mysuite.addTest(loader.loadTestsFromTestCase(TestComposites))
-    
+
     return mysuite
