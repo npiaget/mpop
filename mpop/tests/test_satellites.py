@@ -29,10 +29,11 @@
 """
 try:
     # 3.x name
-    import configparser
+    import configparser as ConfigParser
 except ImportError:
     # 2.x name
-    import ConfigParser as configparser
+    import ConfigParser
+
 import random
 import unittest
 
@@ -98,13 +99,13 @@ def patch_configparser():
             if args[1] == "module":
                 return random_string(8)
 
-    configparser.OldConfigParser = configparser.ConfigParser
-    configparser.ConfigParser = FakeConfigParser
+    ConfigParser.OldConfigParser = ConfigParser.ConfigParser
+    ConfigParser.ConfigParser = FakeConfigParser
 
 def unpatch_configparser():
     """Unpatch fake ConfigParser.
     """
-    configparser.ConfigParser = configparser.OldConfigParser
+    ConfigParser.ConfigParser = ConfigParser.OldConfigParser
     delattr(ConfigParser, "OldConfigParser")
 
 def patch_scene():

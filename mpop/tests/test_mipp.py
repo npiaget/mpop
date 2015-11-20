@@ -3,7 +3,7 @@
 # Copyright (c) 2010, 2011, 2012, 2014.
 
 # Author(s):
- 
+
 #   Martin Raspaud <martin.raspaud@smhi.se>
 
 # This file is part of mpop.
@@ -24,10 +24,10 @@
 """
 try:
     # 3.x name
-    import configparser
+    import configparser as ConfigParser
 except ImportError:
     # 2.x name
-    import ConfigParser as configparser
+    import ConfigParser
 import datetime
 import random
 import unittest
@@ -63,7 +63,7 @@ def patch_configparser():
         """
         def __init__(self, *args, **kwargs):
             pass
-        
+
         def read(self, *args, **kwargs):
             """Dummy read method
             """
@@ -97,8 +97,8 @@ def patch_configparser():
             secs = [INSTRUMENT_NAME+"-level2"] + [INSTRUMENT_NAME + "-" + str(j)
                     for j, dummy in enumerate(CHANNELS)]
             return secs
-        
-        
+
+
         def items(self, arg):
             """Dummy items function.
             """
@@ -111,14 +111,14 @@ def patch_configparser():
                         ("resolution", str(int(random.random() * 1000)))]
             except ValueError:
                 return []
-        
-    configparser.OldConfigParser = configparser.ConfigParser
-    configparser.ConfigParser = FakeConfigParser
+
+    ConfigParser.OldConfigParser = ConfigParser.ConfigParser
+    ConfigParser.ConfigParser = FakeConfigParser
 
 def unpatch_configparser():
     """Unpatch fake ConfigParser.
     """
-    configparser.ConfigParser = configparser.OldConfigParser
+    ConfigParser.ConfigParser = ConfigParser.OldConfigParser
     delattr(ConfigParser, "OldConfigParser")
 
 
@@ -131,7 +131,7 @@ def patch_satellite():
         def __init__(self, data):
             self.info = {}
             self.data = data
-    
+
     class FakeSatelliteInstrumentScene:
         """Dummy SatelliteInstrumentScene.
         """
@@ -160,7 +160,7 @@ def patch_satellite():
 
         def __getitem__(self, key):
             return self.channels[key]
-        
+
         def __setitem__(self, key, data):
             self.channels[key] = FakeChannel(data)
     mpop.scene.OldSatelliteInstrumentScene = mpop.scene.SatelliteInstrumentScene
@@ -176,7 +176,7 @@ def unpatch_satellite():
 def patch_mipp():
     """Patch the SatelliteInstrumentScene.
     """
-    
+
     class FakeMetadata:
         def __init__(self, *args, **kwargs):
             del args, kwargs
@@ -195,13 +195,13 @@ def patch_mipp():
             return FakeMetadata(), np.random.standard_normal((3, 3))
         def __call__(self, *args):
             return FakeMetadata(), np.random.standard_normal((3, 3))
-    
+
     def fake_load(*args, **kwargs):
         """Fake satellite loading function.
         """
         del args, kwargs
         return FakeSlicer()
-    
+
     mipp.xrit.sat.old_load = mipp.xrit.sat.load
     mipp.xrit.sat.load = fake_load
 
@@ -222,7 +222,7 @@ class TestMipp(unittest.TestCase):
         patch_configparser()
         patch_satellite()
         patch_mipp()
-        
+
     # def test_load(self):
     #     """Test the loading function.
     #     """
@@ -234,7 +234,7 @@ class TestMipp(unittest.TestCase):
     #     for chn in CHANNELS:
     #         if chn in satscene.channels_to_load:
     #             self.assertEquals(satscene.channels[chn].data.shape, (3, 3))
-        
+
     def tearDown(self):
         """Unpatch foreign modules.
         """
@@ -248,5 +248,5 @@ def suite():
     loader = unittest.TestLoader()
     mysuite = unittest.TestSuite()
     mysuite.addTest(loader.loadTestsFromTestCase(TestMipp))
-    
+
     return mysuite
