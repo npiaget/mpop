@@ -192,7 +192,7 @@ class TestSatellites(unittest.TestCase):
         inst = random_string(10)
         INSTRUMENTS = (inst, )
         satname = random_string(10)
-        satnumber = random_string(10)
+        satnumber = '{}'.format(random.randint(0, 100))
         satvar = random_string(10)
         myclass = mpop.satellites.build_sat_instr_compositer((satname,
                                                               satnumber,
@@ -213,7 +213,7 @@ class TestSatellites(unittest.TestCase):
         inst = random_string(10)
         INSTRUMENTS = ("avhrr", inst)
         satname = random_string(11)
-        satnumber = random_string(10)
+        satnumber = '{}'.format(random.randint(0, 100))
         satvar = random_string(10)
         klass = mpop.satellites.get_sat_instr_compositer((satname,
                                                           satnumber,
@@ -226,7 +226,7 @@ class TestSatellites(unittest.TestCase):
 
         INSTRUMENTS = (inst,)
         satname = random_string(11)
-        satnumber = random_string(10)
+        satnumber = '{}'.format(random.randint(0, 100))
         satvar = random_string(10)
         klass = mpop.satellites.get_sat_instr_compositer((satname,
                                                           satnumber,
